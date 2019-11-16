@@ -6,16 +6,18 @@
 #include "CameraComp.h"
 #include "Input.h"
 #include "Resources.h"
+#include "Common.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
 
 #include <string>
 
 Application* Application::m_application = nullptr;
-glm::vec3 colorB(1.f, 1.f, 1.f);
+glm::vec3 colorB(0.f, 0.f, 0.f);
 glm::vec3 quadPos(0.f, 0.f, -10.f);
-int x, y;
-bool cra;
+glm::vec3 quadRot(0.f, 0.f, 0.f);
+glm::vec3 quadScale(1.f, 1.f, 1.f);
+
 Application::Application() {
 
 }
@@ -60,6 +62,9 @@ void Application::OpenGlinit()
 	ImGui_ImplSdlGL3_Init(m_window);
 	// Setup style
 	ImGui::StyleColorsDark();
+
+	//Keep mouse in window
+	SDL_SetWindowGrab(m_window, SDL_TRUE);
 
 	SDL_GL_SetSwapInterval(1);
 
@@ -114,6 +119,7 @@ void Application::Loop()
 
 	while (m_appState != AppState::QUITTING)
 	{
+		SetObjTransformAttribs();
 		//imgui 
 		ImGui_ImplSdlGL3_NewFrame(m_window);
 		//poll SDL events
@@ -137,6 +143,28 @@ void Application::Loop()
 				INPUT->GetKeyUp(event.key.keysym.sym);
 				INPUT->SetKey(event.key.keysym.sym, false);
 				break;
+
+			case SDL_MOUSEMOTION:
+				int oldX = x;
+				int oldY = y;
+				SDL_GetMouseState(&x, &y);
+
+				if (lock) {
+					if (x > oldX) {
+						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.05f, 0.f, 0.f));
+					}
+					else {
+						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(-0.05f, 0.f, 0.f));
+					}
+					if (y > oldY) {
+						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, -0.05f, 0.f));
+					}
+					else {
+						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, 0.05f, 0.f));
+					}
+				}
+				INPUT->MoveMouse(glm::ivec2(event.motion.xrel, event.motion.yrel));
+				break;
 			}
 
 			switch (event.key.keysym.sym)
@@ -146,11 +174,11 @@ void Application::Loop()
 				break;
 
 			case SDLK_w:
-				m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, 0.f,2.f));
+				
 				break;
 
 			case SDLK_s:
-				m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, -2.f, 0.f));
+				
 				break;
 
 			case SDLK_a:
@@ -167,9 +195,7 @@ void Application::Loop()
 
 				break;
 
-			case SDL_MOUSEMOTION:
-				INPUT->MoveMouse(glm::ivec2(event.motion.xrel, event.motion.yrel));
-				break;
+			
 
 
 			}
@@ -191,15 +217,16 @@ void Application::Loop()
 		ImGui::Text("Hello, world!");
 
 		ImGui::ColorEdit3("Quad color", (float*)&colorB);
-		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -10.0f, 10.0f);
+		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -50.0f, 50.0f);
+		ImGui::SliderFloat3("QuadScale", (float*)&quadScale, 0.0f, 5.0f);
 
-		if (ImGui::Button("Rotate Camera")) {
+		if (ImGui::Button("Rotate Object")) {
 			rot = glm::angleAxis(glm::radians(rotateD), xAxis);
 			m_entities.at(0)->GetTransform()->AddRotation(rot);
 		}
 		
 
-		//ImGui::Checkbox("FPS camera", &lock);
+		ImGui::Checkbox("FPS camera", &lock);
 
 		if (ImGui::Button("Button")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
 			rot = glm::angleAxis(glm::radians(rotateA), xAxis);
@@ -307,6 +334,19 @@ void Application::GameInit()
 	e->AddComponent(cc);
 	cc->Start();
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	/*
+	e = new Entity();
+	m_entities.push_back(e);
+	e->AddComponent(
+		new MeshRenderer(
+			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetShader("simple"),
+			Resources::GetInstance()->GetTexture("Wood.jpg"))
+	);
+
+
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, -200));
+	*/
 }
 
 void Application::SetCamera(Camera* camera)
@@ -315,4 +355,20 @@ void Application::SetCamera(Camera* camera)
 	{
 		m_mainCamera = camera;
 	}
+}
+
+void Application::SetObjTransformAttribs()
+{
+	if (m_entities.at(0)->GetTransform()->GetPosition() != quadPos) {
+		m_entities.at(0)->GetTransform()->SetPosition(quadPos);
+	}
+	
+	if (m_entities.at(0)->GetTransform()->GetScale() != quadScale) {
+		m_entities.at(0)->GetTransform()->SetScale(quadScale);
+	}
+	
+	
+	//Rotation to do (handle quats)
+
+
 }

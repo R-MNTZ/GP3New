@@ -26,6 +26,12 @@ private:
 	std::vector<Entity*> m_entities;
 	Camera* m_mainCamera = nullptr;
 
+	//Scene graph variables
+	
+	int x, y;
+	bool lock = false;
+	int currentObj = 0;
+
 	//private functions
 	Application();
 	void Init();
@@ -36,6 +42,7 @@ private:
 	void Render();
 
 	void GameInit();
+	void SetObjTransformAttribs();
 
 
 
