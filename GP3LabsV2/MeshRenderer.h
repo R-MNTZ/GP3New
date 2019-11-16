@@ -8,7 +8,7 @@
 class MeshRenderer : public Component
 {
 	Texture* m_texture;
-	Mesh* m_mesh;
+	
 	Model* m_model;
 	ShaderProgram* m_program;
 

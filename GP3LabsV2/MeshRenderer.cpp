@@ -52,8 +52,7 @@ void MeshRenderer::OnRender()
 
 		if (m_texture) m_texture->Bind();
 
-		GL_ATTEMPT(glDrawElements(GL_TRIANGLES, m_mesh->GetIndiciesCount(),
-		GL_UNSIGNED_INT, 0));
+		GL_ATTEMPT(glDrawElements(GL_TRIANGLES, mesh->GetIndiciesCount(),GL_UNSIGNED_INT, 0));
 	
 	}
 

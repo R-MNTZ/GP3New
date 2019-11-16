@@ -6,11 +6,16 @@
 #include "CameraComp.h"
 #include "Input.h"
 #include "Resources.h"
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl_gl3.h>
 
 #include <string>
 
 Application* Application::m_application = nullptr;
-
+glm::vec3 colorB(1.f, 1.f, 1.f);
+glm::vec3 quadPos(0.f, 0.f, -10.f);
+int x, y;
+bool cra;
 Application::Application() {
 
 }
@@ -50,6 +55,11 @@ void Application::OpenGlinit()
 	//creating context
 	m_glContext = SDL_GL_CreateContext(m_window);
 	CHECK_GL_ERROR();
+
+	ImGui::CreateContext();
+	ImGui_ImplSdlGL3_Init(m_window);
+	// Setup style
+	ImGui::StyleColorsDark();
 
 	SDL_GL_SetSwapInterval(1);
 
@@ -93,7 +103,7 @@ void Application::Loop()
 
 
 	glm::vec3 xAxis;
-	xAxis = glm::vec3(0, 1, 0);
+	xAxis = glm::vec3(1, 0, 0);
 
 	xAxis = glm::normalize(xAxis);
 	glm::quat rot;
@@ -104,6 +114,8 @@ void Application::Loop()
 
 	while (m_appState != AppState::QUITTING)
 	{
+		//imgui 
+		ImGui_ImplSdlGL3_NewFrame(m_window);
 		//poll SDL events
 		while (SDL_PollEvent(&event)) {
 			switch (event.type)
@@ -134,7 +146,7 @@ void Application::Loop()
 				break;
 
 			case SDLK_w:
-				m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, 2.f,0.f));
+				m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, 0.f,2.f));
 				break;
 
 			case SDLK_s:
@@ -151,7 +163,7 @@ void Application::Loop()
 				break;
 			case SDLK_d:
 				rot = glm::angleAxis(glm::radians(rotateD), xAxis);
-				m_entities.at(0)->GetTransform()->AddRotation(rot);
+				
 
 				break;
 
@@ -174,9 +186,37 @@ void Application::Loop()
 		Update(deltaTime);
 		Render();
 
-		//LOG_DEBUG(std::to_string(deltaTime), errType::TRACE);
-		//LOG_DEBUG("err", errType::ERROR);
-		//LOG_DEBUG("warning", errType::WARNING);
+		static float f = 0.0f;
+		static int counter = 0;
+		ImGui::Text("Hello, world!");
+
+		ImGui::ColorEdit3("Quad color", (float*)&colorB);
+		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -10.0f, 10.0f);
+
+		if (ImGui::Button("Rotate Camera")) {
+			rot = glm::angleAxis(glm::radians(rotateD), xAxis);
+			m_entities.at(0)->GetTransform()->AddRotation(rot);
+		}
+		
+
+		//ImGui::Checkbox("FPS camera", &lock);
+
+		if (ImGui::Button("Button")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+			rot = glm::angleAxis(glm::radians(rotateA), xAxis);
+			//currentRot = m_entities.at(0)->GetTransform()->GetRotation();
+			m_entities.at(0)->GetTransform()->AddRotation((rot));
+		}
+
+		if (ImGui::Button("Reset Camera")) {
+			std::cout << "aaaaaaaa" << std::endl;
+			m_entities.at(1)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+		}
+		ImGui::SameLine();
+		ImGui::Text("counter = %d", counter);
+
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Render();
+		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 
 		SDL_GL_SwapWindow(m_window);
 	}
@@ -186,6 +226,9 @@ void Application::Loop()
 
 void Application::Quit()
 {
+	//Close imgui
+	ImGui_ImplSdlGL3_Shutdown();
+	ImGui::DestroyContext();
 	//Close SDL 
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);
@@ -246,7 +289,9 @@ void Application::GameInit()
 	Resources::GetInstance()->AddShader(new ShaderProgram(ASSET_PATH +
 		"simple_VERT.glsl", ASSET_PATH + "simple_FRAG.glsl"), "simple");
 
-	m_entities.at(0)->AddComponent(
+	Entity* e = new Entity();
+	m_entities.push_back(e);
+	e->AddComponent(
 		new MeshRenderer(
 			Resources::GetInstance()->GetModel("cube.obj"),
 			Resources::GetInstance()->GetShader("simple"),
@@ -254,14 +299,14 @@ void Application::GameInit()
 	);
 	
 
-	m_entities.at(0)->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	
-
-	m_entities.push_back(new Entity());
+	e = new Entity();
+	m_entities.push_back(e);
 	CameraComp* cc = new CameraComp();
-	m_entities.at(1)->AddComponent(cc);
+	e->AddComponent(cc);
 	cc->Start();
-
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 }
 
 void Application::SetCamera(Camera* camera)
