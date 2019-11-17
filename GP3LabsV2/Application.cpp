@@ -190,7 +190,7 @@ void Application::Loop()
 
 				break;
 			case SDLK_d:
-				rot = glm::angleAxis(glm::radians(rotateD), xAxis);
+				
 				
 
 				break;
@@ -217,8 +217,9 @@ void Application::Loop()
 		ImGui::Text("Hello, world!");
 
 		ImGui::ColorEdit3("Quad color", (float*)&colorB);
-		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -50.0f, 50.0f);
+		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -500.0f, 500.0f);
 		ImGui::SliderFloat3("QuadScale", (float*)&quadScale, 0.0f, 5.0f);
+		ImGui::SliderFloat3("QuadRotation", (float*)&quadRot, 0.f, 360.0f);
 
 		if (ImGui::Button("Rotate Object")) {
 			rot = glm::angleAxis(glm::radians(rotateD), xAxis);
@@ -362,13 +363,27 @@ void Application::SetObjTransformAttribs()
 	if (m_entities.at(0)->GetTransform()->GetPosition() != quadPos) {
 		m_entities.at(0)->GetTransform()->SetPosition(quadPos);
 	}
-	
+
 	if (m_entities.at(0)->GetTransform()->GetScale() != quadScale) {
 		m_entities.at(0)->GetTransform()->SetScale(quadScale);
 	}
-	
-	
-	//Rotation to do (handle quats)
 
+
+	//Rotation to do (handle quats)
+	glm::quat rotX = glm::angleAxis(glm::radians(quadRot.x), glm::vec3(1.f, 0.f, 0.f));
+	glm::quat rotY = glm::angleAxis(glm::radians(quadRot.y), glm::vec3(0.f, 1.f, 0.f));
+	glm::quat rotZ = glm::angleAxis(glm::radians(quadRot.z), glm::vec3(0.f, 0.f, 1.f));
+	glm::quat rotTotal = rotX * rotY * rotZ;
+
+
+
+	if (m_entities.at(0)->GetTransform()->GetRotation() != rotTotal)
+	{
+		m_entities.at(0)->GetTransform()->SetRotation(rotTotal);
+	}
 
 }
+	
+
+	
+	
