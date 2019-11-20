@@ -36,8 +36,9 @@ void MeshRenderer::OnRender()
 			//(float)WINDOW_H, 0.1f, 1000.f);
 
 		//glm::mat4 mvp = proj * view * model;
+	GLuint loc = glGetUniformLocation(m_program->Get(), "model");
 	glm::mat4 mvp = Application::GetInstance()->GetCamera()->Get() * model;
-	GLuint loc = glGetUniformLocation(m_program->Get(), "MVP");
+	 loc = glGetUniformLocation(m_program->Get(), "MVP");
 	glUniformMatrix4fv(loc, 1, false, (const GLfloat*)glm::value_ptr(mvp));
 	glm::vec3 oColor = glm::vec3(colorB.x, colorB.y, colorB.z);
 	loc = glGetUniformLocation(m_program->Get(), "objectColor");

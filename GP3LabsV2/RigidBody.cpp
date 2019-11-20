@@ -40,8 +40,8 @@ void RigidBody::UpdateParent()
 void RigidBody::UpdateRigidBody()
 {
 	btTransform t =
-		Physics::ConverTransformToBtTransform(*m_entity->GetTransform());
-
+		Physics::ConvertTransformToBtTransform(*m_entity->GetTransform());
+	
 	m_rigidBody->setWorldTransform(t);
 	m_rigidBody->getMotionState()->setWorldTransform(t);
 

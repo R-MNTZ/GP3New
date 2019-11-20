@@ -7,6 +7,9 @@
 #include "Input.h"
 #include "Resources.h"
 #include "Common.h"
+#include "Physics.h"
+#include "BoxShape.h"
+#include "RigidBody.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
 
@@ -17,6 +20,7 @@ glm::vec3 colorB(0.f, 0.f, 0.f);
 glm::vec3 quadPos(0.f, 0.f, -10.f);
 glm::vec3 quadRot(0.f, 0.f, 0.f);
 glm::vec3 quadScale(1.f, 1.f, 1.f);
+bool mode1 = true;
 
 Application::Application() {
 
@@ -208,41 +212,48 @@ void Application::Loop()
 		m_worldDeltaTime = deltaTime;
 		prevTicks = currentTicks;
 
+		Physics::GetInstance()->Update(deltaTime);
 		//update and render all entities 
 		Update(deltaTime);
 		Render();
 
 		static float f = 0.0f;
 		static int counter = 0;
-		ImGui::Text("Hello, world!");
+		ImGui::Checkbox("Mode", &mode1);
+		if (mode1) {
+			ImGui::Text("Hello, world!");
 
-		ImGui::ColorEdit3("Quad color", (float*)&colorB);
-		ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -500.0f, 500.0f);
-		ImGui::SliderFloat3("QuadScale", (float*)&quadScale, 0.0f, 5.0f);
-		ImGui::SliderFloat3("QuadRotation", (float*)&quadRot, 0.f, 360.0f);
+			ImGui::ColorEdit3("Quad color", (float*)&colorB);
+			ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -500.0f, 500.0f);
+			ImGui::SliderFloat3("QuadScale", (float*)&quadScale, 0.0f, 5.0f);
+			ImGui::SliderFloat3("QuadRotation", (float*)&quadRot, 0.f, 360.0f);
 
-		if (ImGui::Button("Rotate Object")) {
-			rot = glm::angleAxis(glm::radians(rotateD), xAxis);
-			m_entities.at(0)->GetTransform()->AddRotation(rot);
+			if (ImGui::Button("Rotate Object")) {
+				rot = glm::angleAxis(glm::radians(rotateD), xAxis);
+				m_entities.at(0)->GetTransform()->AddRotation(rot);
+			}
+
+
+			ImGui::Checkbox("FPS camera", &lock);
+
+			if (ImGui::Button("Button")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+				rot = glm::angleAxis(glm::radians(rotateA), xAxis);
+				//currentRot = m_entities.at(0)->GetTransform()->GetRotation();
+				m_entities.at(0)->GetTransform()->AddRotation((rot));
+			}
+
+			if (ImGui::Button("Reset Camera")) {
+				std::cout << "aaaaaaaa" << std::endl;
+				m_entities.at(1)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+			}
+			ImGui::SameLine();
+			ImGui::Text("counter = %d", counter);
+
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
-		
-
-		ImGui::Checkbox("FPS camera", &lock);
-
-		if (ImGui::Button("Button")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-			rot = glm::angleAxis(glm::radians(rotateA), xAxis);
-			//currentRot = m_entities.at(0)->GetTransform()->GetRotation();
-			m_entities.at(0)->GetTransform()->AddRotation((rot));
+		else {
+			ImGui::Text("Hello, you are in mode 2!");
 		}
-
-		if (ImGui::Button("Reset Camera")) {
-			std::cout << "aaaaaaaa" << std::endl;
-			m_entities.at(1)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-		}
-		ImGui::SameLine();
-		ImGui::Text("counter = %d", counter);
-
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -258,6 +269,7 @@ void Application::Quit()
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
 	//Close SDL 
+	Physics::GetInstance()->Quit();
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);
 	SDL_QuitSubSystem(SDL_INIT_EVERYTHING);
@@ -308,8 +320,6 @@ void Application::Render()
 
 void Application::GameInit()
 {
-	//improve this
-
 
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
@@ -325,9 +335,15 @@ void Application::GameInit()
 			Resources::GetInstance()->GetShader("simple"),
 			Resources::GetInstance()->GetTexture("Wood.jpg"))
 	);
+	MeshRenderer* m = e->GetComponent<MeshRenderer>();
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
+	//e->AddComponent<RigidBody>();
+	//e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
+	//	100.f, 1.f, 100.f)));
+	//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
+	e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 	
-
-	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	
 	
 	e = new Entity();
 	m_entities.push_back(e);

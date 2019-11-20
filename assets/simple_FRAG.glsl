@@ -6,12 +6,23 @@ uniform sampler2D diffuse;
 in vec2 texCoords0;
 vec4 c1;
 vec4 c2;
+vec3 lightColor = vec3(1.0f,1.0f,1.0f);
+vec3 lightPos = vec3 (0.0f, 10.0f, 0.0f);
+in vec3 Normal;
+in vec3 FragPos;
 
 
 void main()
 {
-	 
+	vec3 norm = normalize(Normal);
+	vec3 lightDir = normalize(lightPos - FragPos); 
+	float diff = max(dot(norm, lightDir), 0.0);
+	vec3 diffuse1 = diff * lightColor;
+
+		float ambientStrength = 0.1;
+		vec3 ambient = ambientStrength * lightColor;
 	    c1 = texture2D(diffuse, texCoords0);
-		c2 = vec4(objectColor, 1.f) + c1;
+		c2 = vec4(((ambient + diffuse1)  * objectColor), 1.f) + c1;
+
 		gl_FragColor = clamp(c2, 0.0f, 1.0f); 
 }
