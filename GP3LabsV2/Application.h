@@ -31,6 +31,10 @@ private:
 	int x, y;
 	bool lock = false;
 	int currentObj = 0;
+	glm::vec3 pos[5];
+	glm::vec3 scaleValues[5];
+	glm::vec3 rotationValues [5];
+	int entityNum;
 
 	//private functions
 	Application();

@@ -31,3 +31,11 @@ void Entity::OnRender()
 		c->OnRender();
 	}
 }
+
+void Entity::OnStart()
+{
+	for (auto& c : m_components)
+	{
+		c->OnStart();
+	}
+}

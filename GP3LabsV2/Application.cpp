@@ -13,6 +13,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
 
+
 #include <string>
 
 Application* Application::m_application = nullptr;
@@ -20,7 +21,7 @@ glm::vec3 colorB(0.f, 0.f, 0.f);
 glm::vec3 quadPos(0.f, 0.f, -10.f);
 glm::vec3 quadRot(0.f, 0.f, 0.f);
 glm::vec3 quadScale(1.f, 1.f, 1.f);
-bool mode1 = true;
+bool mode1 = false;
 
 Application::Application() {
 
@@ -118,7 +119,7 @@ void Application::Loop()
 	glm::quat rot;
 	float rotateA = 15.0f;
 	float rotateD = -15.0f;
-	glm::quat currentRot;
+	
 	//glm::quat result;
 
 	while (m_appState != AppState::QUITTING)
@@ -155,16 +156,16 @@ void Application::Loop()
 
 				if (lock) {
 					if (x > oldX) {
-						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.05f, 0.f, 0.f));
+						m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.05f, 0.f, 0.f));
 					}
 					else {
-						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(-0.05f, 0.f, 0.f));
+						m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(-0.05f, 0.f, 0.f));
 					}
 					if (y > oldY) {
-						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, -0.05f, 0.f));
+						m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, -0.05f, 0.f));
 					}
 					else {
-						m_entities.at(1)->GetTransform()->AddPosition(glm::vec3(0.f, 0.05f, 0.f));
+						m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, 0.05f, 0.f));
 					}
 				}
 				INPUT->MoveMouse(glm::ivec2(event.motion.xrel, event.motion.yrel));
@@ -224,13 +225,13 @@ void Application::Loop()
 			ImGui::Text("Hello, world!");
 
 			ImGui::ColorEdit3("Quad color", (float*)&colorB);
-			ImGui::SliderFloat3("QuadPos", (float*)&quadPos, -500.0f, 500.0f);
-			ImGui::SliderFloat3("QuadScale", (float*)&quadScale, 0.0f, 5.0f);
-			ImGui::SliderFloat3("QuadRotation", (float*)&quadRot, 0.f, 360.0f);
+			ImGui::SliderFloat3("QuadPos", (float*)&pos[entityNum], -50.0f, 50.0f);
+			ImGui::SliderFloat3("QuadScale", (float*)&scaleValues[entityNum], 0.0f, 5.0f);
+			ImGui::SliderFloat3("QuadRotation", (float*)&rotationValues[entityNum], 0.f, 360.0f);
 
 			if (ImGui::Button("Rotate Object")) {
 				rot = glm::angleAxis(glm::radians(rotateD), xAxis);
-				m_entities.at(0)->GetTransform()->AddRotation(rot);
+				m_entities.at(entityNum)->GetTransform()->AddRotation(rot);
 			}
 
 
@@ -239,12 +240,11 @@ void Application::Loop()
 			if (ImGui::Button("Button")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
 				rot = glm::angleAxis(glm::radians(rotateA), xAxis);
 				//currentRot = m_entities.at(0)->GetTransform()->GetRotation();
-				m_entities.at(0)->GetTransform()->AddRotation((rot));
+				m_entities.at(entityNum)->GetTransform()->AddRotation((rot));
 			}
 
 			if (ImGui::Button("Reset Camera")) {
-				std::cout << "aaaaaaaa" << std::endl;
-				m_entities.at(1)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+				m_entities.at(2)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
 			}
 			ImGui::SameLine();
 			ImGui::Text("counter = %d", counter);
@@ -253,6 +253,25 @@ void Application::Loop()
 		}
 		else {
 			ImGui::Text("Hello, you are in mode 2!");
+
+			if (ImGui::Button("Object0")) {
+				entityNum = 0;
+				mode1 = !mode1;
+			}
+
+			if (ImGui::Button("Object1")) {
+				entityNum = 1;
+				mode1 = !mode1;
+			}
+
+			if (ImGui::Button("Camera")) {
+				entityNum = 2;
+				mode1 = !mode1;
+			}
+
+			
+
+
 		}
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
@@ -320,6 +339,11 @@ void Application::Render()
 
 void Application::GameInit()
 {
+	/*
+	//Pass in Light values
+	Lighting* light = new Lighting();
+	light->passLightUniform();
+	*/ 
 
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
@@ -337,21 +361,37 @@ void Application::GameInit()
 	);
 	MeshRenderer* m = e->GetComponent<MeshRenderer>();
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
-	//e->AddComponent<RigidBody>();
+//	e->AddComponent<RigidBody>();
 	//e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
-	//	100.f, 1.f, 100.f)));
+		//100.f, 1.f, 100.f)));
 	//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 	e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
-	
-	
-	
-	e = new Entity();
-	m_entities.push_back(e);
-	CameraComp* cc = new CameraComp();
-	e->AddComponent(cc);
-	cc->Start();
-	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	pos[0] = e->GetTransform()->GetPosition();
+	scaleValues[0] = e->GetTransform()->GetScale();
+	glm::vec3 rotNew = glm::vec3(0, 0, 0);
+	rotationValues[0] = rotNew;
 	/*
+	for (int i = 0; i < 100; i++)
+	{
+		e = new Entity();
+		m_entities.push_back(e);
+		e->AddComponent(
+			new MeshRenderer(
+				Resources::GetInstance()->GetModel("cube.obj"),
+				Resources::GetInstance()->GetShader("simple"),
+				Resources::GetInstance()->GetTexture("Wood.jpg"))
+		);
+
+		e->GetTransform()->SetPosition(glm::vec3(0, i+ 1.f, -10));
+		e->AddComponent<RigidBody>();
+		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
+			1.f, 1.f, 1.f)));
+		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
+		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
+	
+	}
+	*/
+	
 	e = new Entity();
 	m_entities.push_back(e);
 	e->AddComponent(
@@ -361,9 +401,26 @@ void Application::GameInit()
 			Resources::GetInstance()->GetTexture("Wood.jpg"))
 	);
 
+	
+	e->GetTransform()->SetPosition(glm::vec3(3, 0, -10));
+	
+	pos[1] = e->GetTransform()->GetPosition();
+	scaleValues[1] = e->GetTransform()->GetScale();
+	
+	rotationValues[1] = rotNew;
+	
 
-	e->GetTransform()->SetPosition(glm::vec3(0, 0, -200));
-	*/
+	e = new Entity();
+	m_entities.push_back(e);
+	CameraComp* cc = new CameraComp();
+	e->AddComponent(cc);
+	cc->Start();
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	pos[2] = e->GetTransform()->GetPosition();
+	scaleValues[2] = e->GetTransform()->GetScale();
+	 rotNew = glm::vec3(0, 0, 0);
+	rotationValues[2] = rotNew;
+	
 }
 
 void Application::SetCamera(Camera* camera)
@@ -376,28 +433,32 @@ void Application::SetCamera(Camera* camera)
 
 void Application::SetObjTransformAttribs()
 {
-	if (m_entities.at(0)->GetTransform()->GetPosition() != quadPos) {
-		m_entities.at(0)->GetTransform()->SetPosition(quadPos);
+	//if (entityNum == 2 && lock == false) {
+		//Position
+		if (m_entities.at(entityNum)->GetTransform()->GetPosition() != pos[entityNum]) {
+			m_entities.at(entityNum)->GetTransform()->SetPosition(pos[entityNum]);
+		}
+	//}
+	
+	//Scale
+	if (m_entities.at(entityNum)->GetTransform()->GetScale() != scaleValues[entityNum]) {
+		m_entities.at(entityNum)->GetTransform()->SetScale(scaleValues[entityNum]);
 	}
 
-	if (m_entities.at(0)->GetTransform()->GetScale() != quadScale) {
-		m_entities.at(0)->GetTransform()->SetScale(quadScale);
-	}
-
-
-	//Rotation to do (handle quats)
-	glm::quat rotX = glm::angleAxis(glm::radians(quadRot.x), glm::vec3(1.f, 0.f, 0.f));
-	glm::quat rotY = glm::angleAxis(glm::radians(quadRot.y), glm::vec3(0.f, 1.f, 0.f));
-	glm::quat rotZ = glm::angleAxis(glm::radians(quadRot.z), glm::vec3(0.f, 0.f, 1.f));
+	
+	//Rotation
+	glm::quat rotX = glm::angleAxis(glm::radians(rotationValues[entityNum].x), glm::vec3(1.f, 0.f, 0.f));
+	glm::quat rotY = glm::angleAxis(glm::radians(rotationValues[entityNum].y), glm::vec3(0.f, 1.f, 0.f));
+	glm::quat rotZ = glm::angleAxis(glm::radians(rotationValues[entityNum].z), glm::vec3(0.f, 0.f, 1.f));
 	glm::quat rotTotal = rotX * rotY * rotZ;
+	
 
 
-
-	if (m_entities.at(0)->GetTransform()->GetRotation() != rotTotal)
+	if (m_entities.at(entityNum)->GetTransform()->GetRotation() != rotTotal)
 	{
-		m_entities.at(0)->GetTransform()->SetRotation(rotTotal);
+		m_entities.at(entityNum)->GetTransform()->SetRotation(rotTotal);
 	}
-
+	
 }
 	
 
