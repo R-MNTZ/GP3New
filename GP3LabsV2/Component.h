@@ -9,7 +9,8 @@ protected:
 	friend class Entity;
 
 public:
-	virtual void OnUpdate(float deltaTime) = 0;
-	virtual void OnRender() = 0;
-	virtual void OnStart() = 0;
+	virtual void OnUpdate(float deltaTime) {};
+	virtual void OnRender()
+	{};
+	virtual void OnStart() {};
 };

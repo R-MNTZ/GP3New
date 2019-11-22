@@ -361,16 +361,16 @@ void Application::GameInit()
 	);
 	MeshRenderer* m = e->GetComponent<MeshRenderer>();
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
-//	e->AddComponent<RigidBody>();
-	//e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
-		//100.f, 1.f, 100.f)));
-	//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
+	e->AddComponent<RigidBody>();
+	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
+		100.f, 1.f, 100.f)));
+	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 	e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 	pos[0] = e->GetTransform()->GetPosition();
 	scaleValues[0] = e->GetTransform()->GetScale();
 	glm::vec3 rotNew = glm::vec3(0, 0, 0);
 	rotationValues[0] = rotNew;
-	/*
+	
 	for (int i = 0; i < 100; i++)
 	{
 		e = new Entity();
@@ -390,7 +390,7 @@ void Application::GameInit()
 		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 	
 	}
-	*/
+	
 	
 	e = new Entity();
 	m_entities.push_back(e);
