@@ -32,9 +32,23 @@ void RigidBody::Init(CollisionShape* shape, float mass, const glm::vec3 localInt
 void RigidBody::UpdateParent()
 {
 	
-
+	
 	//TODO Get transform from rigidBody's motionstate
 	//and apply it to the game object's transform
+	btTransform transform;
+	
+	m_rigidBody->getMotionState()->getWorldTransform(transform);
+
+	btQuaternion rot = transform.getRotation();
+	//glm::quat otherRot = glm::quat(rot.x, rot.y, rot.z, rot.w);
+	btVector3 pos = transform.getOrigin();
+	//glm::vec3 otherPos = glm::vec3(pos.x, pos.y, pos.z);
+	
+	m_entity->GetTransform()->SetRotation(glm::quat(rot.getW(), rot.getX(), rot.getY(), rot.getZ()));
+	m_entity->GetTransform()->SetPosition(glm::vec3(pos.getX(), pos.getY(), pos.getZ()));
+	
+
+	
 }
 
 void RigidBody::UpdateRigidBody()
