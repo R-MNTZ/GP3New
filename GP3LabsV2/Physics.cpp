@@ -20,6 +20,10 @@ void Physics::AddRigidBody(RigidBody* r)
 	m_world->addRigidBody(r->Get());
 }
 
+void Physics::AddBoxPush(BoxPush* b) {
+	m_bp.push_back(b);
+}
+
 void Physics::PreUpdate()
 {
 	for (auto r : m_rbodies)
@@ -27,6 +31,35 @@ void Physics::PreUpdate()
 		r->UpdateRigidBody();
 	}
 }
+
+
+
+void Physics::AddForce(float deltaTime) {
+	PreUpdate();
+	m_world->stepSimulation(deltaTime, 2);
+
+	for (auto b : m_bp)
+	{
+		for (auto r : m_rbodies)
+		{
+			r->ForceUp();
+		}
+	}
+}
+
+void Physics::AddTorque(float deltaTime) {
+	PreUpdate();
+	m_world->stepSimulation(deltaTime, 2);
+
+	for (auto b : m_bp)
+	{
+		for (auto r : m_rbodies)
+		{
+			r->Torque();
+		}
+	}
+}
+
 
 void Physics::Update(float deltaTime)
 {

@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "Camera.h"
 #include "CameraComp.h"
+#include "Lighting.h"
 
 
 
@@ -47,7 +48,9 @@ void MeshRenderer::OnRender()
 	glm::vec3 oColor = glm::vec3(colorB.x, colorB.y, colorB.z);
 	loc = glGetUniformLocation(m_program->Get(), "objectColor");
 	glUniform3f(loc, oColor.x, oColor.y, oColor.z);
-
+	//Pass in Light values
+	Lighting* light = new Lighting();
+	light->passLightUniform();
 
 
 	m_texture->Bind();

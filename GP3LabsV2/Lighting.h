@@ -7,7 +7,7 @@
 class Lighting
 {
 private:
-	glm::vec3 light = glm::vec3(0.f, 10.0f, 0.f);
+	glm::vec3 light = glm::vec3(-10.f, 0.0f, 0.f);
 	ShaderProgram* sp;
 public:
 	void passLightUniform() {

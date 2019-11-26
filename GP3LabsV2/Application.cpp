@@ -10,6 +10,7 @@
 #include "Physics.h"
 #include "BoxShape.h"
 #include "RigidBody.h"
+#include "Lighting.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
 
@@ -22,6 +23,8 @@ glm::vec3 quadPos(0.f, 0.f, -10.f);
 glm::vec3 quadRot(0.f, 0.f, 0.f);
 glm::vec3 quadScale(1.f, 1.f, 1.f);
 bool mode1 = false;
+RigidBody* r = new RigidBody();
+BoxPush* bp = new BoxPush();
 
 Application::Application() {
 
@@ -120,10 +123,19 @@ void Application::Loop()
 	float rotateA = 15.0f;
 	float rotateD = -15.0f;
 	
+	
+	
 	//glm::quat result;
 
 	while (m_appState != AppState::QUITTING)
 	{
+		auto currentTicks = std::chrono::high_resolution_clock::now();
+
+		float deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(currentTicks -
+			prevTicks).count() / 100000;
+		m_worldDeltaTime = deltaTime;
+		prevTicks = currentTicks;
+
 		SetObjTransformAttribs();
 		//imgui 
 		ImGui_ImplSdlGL3_NewFrame(m_window);
@@ -180,6 +192,8 @@ void Application::Loop()
 
 			case SDLK_w:
 				
+				Physics::GetInstance()->AddForce(deltaTime);
+				
 				break;
 
 			case SDLK_s:
@@ -196,7 +210,7 @@ void Application::Loop()
 				break;
 			case SDLK_d:
 				
-				
+				Physics::GetInstance()->AddTorque(deltaTime);
 
 				break;
 
@@ -206,12 +220,7 @@ void Application::Loop()
 			}
 		}
 
-		auto currentTicks = std::chrono::high_resolution_clock::now();
-
-		float deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(currentTicks -
-			prevTicks).count() / 100000;
-		m_worldDeltaTime = deltaTime;
-		prevTicks = currentTicks;
+		 
 
 		Physics::GetInstance()->Update(deltaTime);
 		//update and render all entities 
@@ -339,17 +348,20 @@ void Application::Render()
 
 void Application::GameInit()
 {
-	/*
-	//Pass in Light values
-	Lighting* light = new Lighting();
-	light->passLightUniform();
-	*/ 
+	
+	
+	
+	
 
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
 	Resources::GetInstance()->AddTexture("Wood.jpg");
 	Resources::GetInstance()->AddShader(new ShaderProgram(ASSET_PATH +
 		"simple_VERT.glsl", ASSET_PATH + "simple_FRAG.glsl"), "simple");
+
+	
+
+	
 
 	Entity* e = new Entity();
 	m_entities.push_back(e);
@@ -415,10 +427,16 @@ void Application::GameInit()
 		e->AddComponent<RigidBody>();
 		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
 			1.f, 1.f, 1.f)));
+		
+		
+			e->AddComponent<BoxPush>();
+			e->GetComponent<BoxPush>()->Init();
+		
 		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 
 	}
+	
 }
 
 void Application::SetCamera(Camera* camera)

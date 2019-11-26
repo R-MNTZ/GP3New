@@ -31,10 +31,6 @@ void RigidBody::Init(CollisionShape* shape, float mass, const glm::vec3 localInt
 
 void RigidBody::UpdateParent()
 {
-	
-	
-	//TODO Get transform from rigidBody's motionstate
-	//and apply it to the game object's transform
 	btTransform transform;
 	
 	m_rigidBody->getMotionState()->getWorldTransform(transform);
@@ -47,16 +43,57 @@ void RigidBody::UpdateParent()
 	m_entity->GetTransform()->SetRotation(glm::quat(rot.getW(), rot.getX(), rot.getY(), rot.getZ()));
 	m_entity->GetTransform()->SetPosition(glm::vec3(pos.getX(), pos.getY(), pos.getZ()));
 	
-
+	
 	
 }
 
 void RigidBody::UpdateRigidBody()
 {
+	
 	btTransform t =
 		Physics::ConvertTransformToBtTransform(*m_entity->GetTransform());
 	
 	m_rigidBody->setWorldTransform(t);
 	m_rigidBody->getMotionState()->setWorldTransform(t);
 
+}
+
+void RigidBody::ForceUp() {
+
+	btVector3 force(0.0, 1.0, 0.0);
+	m_rigidBody->applyCentralForce(force);
+}
+
+void RigidBody::Torque() {
+	btVector3 force(0.0, 5.0, 0.0);
+	m_rigidBody->applyTorque(force);
+}
+
+void BoxPush::OnUpdate(float deltaTime)
+{
+}
+
+void BoxPush::OnRender()
+{
+}
+
+void BoxPush::OnStart()
+{
+}
+
+
+void BoxPush::ForceUp2(float deltaTime) {
+	RigidBody* r = new RigidBody();
+	r->Get()->applyCentralForce(btVector3(0.0, 200.0, 0.0));
+	
+}
+
+
+void BoxPush::Nothing()
+{
+	std::cout << "this does nothing" << std::endl;
+}
+
+void BoxPush::Init() {
+	Physics::GetInstance()->AddBoxPush(this);
 }

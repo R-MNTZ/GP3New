@@ -4,6 +4,7 @@
 #include "CollisionShape.h"
 #include "pch.h"
 
+
 class RigidBody : public Component
 {
 private:
@@ -20,6 +21,19 @@ public:
 		localInteria = glm::vec3(1));
 	virtual void UpdateParent();
 	virtual void UpdateRigidBody();
+	void ForceUp();
+	void Torque();
 	btRigidBody* Get() { return m_rigidBody; }
 
+};
+
+class BoxPush : public Component
+{
+public:
+	virtual void OnUpdate(float deltaTime) override;
+	virtual void OnRender() override;
+	virtual void OnStart() override;
+	void ForceUp2(float deltaTime);
+	void Nothing();
+	void Init();
 };

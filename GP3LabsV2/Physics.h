@@ -3,6 +3,7 @@
 #include "Transform.h"
 
 class RigidBody;
+class BoxPush;
 
 class Physics
 {
@@ -18,6 +19,7 @@ class Physics
 	btDynamicsWorld* m_world = new btDiscreteDynamicsWorld(
 		m_dispatcher, m_broadphase, m_solver, m_collisionConfig);
 	std::vector<RigidBody*> m_rbodies;
+	std::vector<BoxPush*> m_bp;
 
 	Physics();
 
@@ -27,7 +29,10 @@ public:
 	static Physics* GetInstance();
 	inline btDynamicsWorld* GetWorld() { return GetInstance()->m_world; };
 	void AddRigidBody(RigidBody* r);
+	void AddBoxPush(BoxPush* b);
 	void PreUpdate();
+	void AddForce(float deltaTime);
+	void AddTorque(float deltaTime);
 	void Update(float deltaTime);
 	void Quit();
 
