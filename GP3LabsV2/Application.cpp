@@ -9,6 +9,10 @@
 #include "Common.h"
 #include "Physics.h"
 #include "BoxShape.h"
+#include "SphereShape.h"
+#include "CapsuleShape.h"
+#include "CylinderShape.h"
+#include "ConeShape.h"
 #include "RigidBody.h"
 #include "Lighting.h"
 #include <imgui/imgui.h>
@@ -383,6 +387,7 @@ void Application::GameInit()
 	glm::vec3 rotNew = glm::vec3(0, 0, 0);
 	rotationValues[0] = rotNew;
 	
+	
 	e = new Entity();
 	m_entities.push_back(e);
 	e->AddComponent(
@@ -425,8 +430,7 @@ void Application::GameInit()
 
 		e->GetTransform()->SetPosition(glm::vec3(0, i + 1.f, -10));
 		e->AddComponent<RigidBody>();
-		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
-			1.f, 1.f, 1.f)));
+		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
 		
 		
 			e->AddComponent<BoxPush>();
