@@ -48,6 +48,9 @@ void MeshRenderer::OnRender()
 	glm::vec3 oColor = glm::vec3(colorB.x, colorB.y, colorB.z);
 	loc = glGetUniformLocation(m_program->Get(), "objectColor");
 	glUniform3f(loc, oColor.x, oColor.y, oColor.z);
+	GLint applyGamma = gamma;
+	loc = glGetUniformLocation(m_program->Get(), "gamma");
+	glUniform1i(loc, applyGamma);
 	//Pass in Light values
 	Lighting* light = new Lighting();
 	light->passLightUniform();

@@ -4,6 +4,7 @@ uniform vec3 objectColor;
 uniform sampler2D diffuse;
 uniform vec3 viewPos;
 //uniform vec3 lightPos;
+uniform int gamma;
 
 in vec2 texCoords0;
 vec4 c1;
@@ -32,5 +33,13 @@ void main()
 	   
 		c2 = vec4(((ambient + specular + diffuse1) + color1.rgb), 1.f);
 
-		gl_FragColor = clamp(c2 + objectColor, 0.0f, 1.0f); 
+		vec4 fragColor = c2 + vec4(objectColor, 1.0f);
+
+		if (gamma == 1){
+			fragColor.r = 1.0 - fragColor.r;
+			fragColor.g = 1.0 - fragColor.g;
+			fragColor.b = 1.0 - fragColor.b;
+		} 
+
+		gl_FragColor = clamp(fragColor, 0.0f, 1.0f); 
 }

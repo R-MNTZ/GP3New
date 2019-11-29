@@ -27,18 +27,19 @@ private:
 	int m_windowWidth = 1280;
 	int m_windowHeight = 720;
 	AppState m_appState = AppState::INITILISING;
+	UiState m_uiState = UiState::SELECT;
 	float m_worldDeltaTime = 0.f;
 	std::vector<Entity*> m_entities;
 	Camera* m_mainCamera = nullptr;
 
 	//Scene graph variables
-	
+
 	int x, y;
 	bool lock = false;
 	int currentObj = 0;
 	glm::vec3 pos[5];
 	glm::vec3 scaleValues[5];
-	glm::vec3 rotationValues [5];
+	glm::vec3 rotationValues[5];
 	int entityNum;
 
 	//private functions
@@ -67,7 +68,7 @@ public:
 
 	inline Camera* GetCamera() { return m_mainCamera; }
 	void SetCamera(Camera* camera);
-	
+
 
 
 
