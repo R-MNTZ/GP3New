@@ -234,7 +234,18 @@ void Application::Loop()
 		static float f = 0.0f;
 		static int counter = 0;
 		ImGui::Checkbox("Mode", &mode1);
-		if (mode1) {
+		if (ImGui::Button("Select Component")) {
+			m_uiState = UiState::SELECT;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Edit Component")) {
+			m_uiState = UiState::EDITCOMP;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Edit all Components")) {
+			m_uiState = UiState::EDITALL;
+		}
+		if (m_uiState == UiState::EDITCOMP) {
 			ImGui::Text("Hello, world!");
 
 			
@@ -264,34 +275,34 @@ void Application::Loop()
 
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
-		else {
-			ImGui::Text("Hello, you are in mode 2!");
+		else if (m_uiState == UiState::SELECT) {
+			
 
-			ImGui::ColorEdit3("Box color", (float*)&colorB);
+			
 
 			if (ImGui::Button("Object0")) {
 				entityNum = 0;
-				mode1 = !mode1;
+				m_uiState = UiState::EDITCOMP;
 			}
 
 			if (ImGui::Button("Object1")) {
 				entityNum = 1;
-				mode1 = !mode1;
+				m_uiState = UiState::EDITCOMP;
 			}
 
 			if (ImGui::Button("Camera")) {
 				entityNum = 2;
-				mode1 = !mode1;
+				m_uiState = UiState::EDITCOMP;
 			}
 
 			if (ImGui::Button("Object2")) {
 				entityNum = 3;
-				mode1 = !mode1;
+				m_uiState = UiState::EDITCOMP;
 			}
 
-			
-
-
+		}
+		else if (m_uiState = UiState::EDITALL) {
+			ImGui::ColorEdit3("Box color", (float*)&colorB);
 		}
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
@@ -439,10 +450,10 @@ void Application::GameInit()
 		e->AddComponent<RigidBody>();
 		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
 		
-		if (i == 1) {
+		
 			e->AddComponent<BoxPush>();
 			e->GetComponent<BoxPush>()->Init();
-		}
+		
 		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 
@@ -476,12 +487,15 @@ void Application::SetCamera(Camera* camera)
 
 void Application::SetObjTransformAttribs()
 {
-	//if (entityNum == 2 && lock == false) {
-		//Position
+
+	
+	
+	// position
 		if (m_entities.at(entityNum)->GetTransform()->GetPosition() != pos[entityNum]) {
 			m_entities.at(entityNum)->GetTransform()->SetPosition(pos[entityNum]);
 		}
-	//}
+		
+		pos[entityNum] = m_entities.at(entityNum)->GetTransform()->GetPosition();
 	
 	//Scale
 	if (m_entities.at(entityNum)->GetTransform()->GetScale() != scaleValues[entityNum]) {
