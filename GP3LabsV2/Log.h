@@ -15,7 +15,7 @@
 
 //​TODO:​ implement different log levels
 
-enum errType
+enum logType
 {
 	TRACE, ERROR, WARNING
 };
@@ -27,7 +27,7 @@ private:
 	Log();
 
 public:
-	static void Debug(const std::string& msg, errType logType, const char* file, int line);
+	static void Debug(const std::string& msg, logType logType, const char* file, int line);
 	static bool CheckGLError(const char* file, int line);
 	///const static char fff = 'n';
 };

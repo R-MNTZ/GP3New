@@ -48,7 +48,7 @@ bool Input::GetKeyDown(SDL_Keycode key)
 {
 	if (key != NULL) 
 	{
-		LOG_DEBUG("key down", errType::TRACE);
+		LOG_DEBUG("key down", logType::TRACE);
 		return true;
 	}
 	else
@@ -63,7 +63,7 @@ bool Input::GetKeyUp(SDL_Keycode key)
 {
 	if (key != NULL)
 	{
-		LOG_DEBUG("key up", errType::TRACE);
+		LOG_DEBUG("key up", logType::TRACE);
 		return true;
 	}
 	else

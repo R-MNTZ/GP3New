@@ -40,7 +40,7 @@ GLuint Texture::Load(const std::string& directory)
 	}
 	else
 	{
-		LOG_DEBUG("Failed to load texture", errType::ERROR);
+		LOG_DEBUG("Failed to load texture", logType::ERROR);
 	}
 
 	stbi_image_free(data);
@@ -61,7 +61,7 @@ void Texture::Bind()
 		texPointer = &m_texture;
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
-		LOG_DEBUG("binding texture", errType::ERROR);
+		LOG_DEBUG("binding texture", logType::ERROR);
 	}
 
 }

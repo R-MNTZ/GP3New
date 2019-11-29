@@ -10,6 +10,11 @@ enum AppState
 	INITILISING, RUNNING, QUITTING
 };
 
+enum UiState
+{
+	SELECT, EDITCOMP, EDITALL
+};
+
 class Camera; //forward declaration
 
 class Application

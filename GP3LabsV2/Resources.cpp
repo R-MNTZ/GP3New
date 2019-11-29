@@ -22,7 +22,7 @@ void Resources::AddModel(const std::string& directory)
 	if (m_models.find(directory) == m_models.end())
 	{
 		m_models[directory] = new Model(ASSET_PATH + directory);
-		LOG_DEBUG("Model loaded from " + directory, errType::TRACE);
+		LOG_DEBUG("Model loaded from " + directory, logType::TRACE);
 	}
 }
 
@@ -31,7 +31,7 @@ void Resources::AddTexture(const std::string& directory)
 	if (m_textures.find(directory) == m_textures.end())
 	{
 		m_textures[directory] = new Texture(ASSET_PATH + directory);
-		LOG_DEBUG("Texture loaded from " + directory, errType::TRACE);
+		LOG_DEBUG("Texture loaded from " + directory, logType::TRACE);
 	}
 }
 

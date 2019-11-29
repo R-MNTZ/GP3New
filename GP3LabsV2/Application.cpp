@@ -39,7 +39,7 @@ void Application::Init()
 	//initialization
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		LOG_DEBUG(SDL_GetError(), errType::ERROR);
+		LOG_DEBUG(SDL_GetError(), logType::ERROR);
 		exit(-1);
 
 	}
@@ -237,7 +237,7 @@ void Application::Loop()
 		if (mode1) {
 			ImGui::Text("Hello, world!");
 
-			ImGui::ColorEdit3("Quad color", (float*)&colorB);
+			
 			ImGui::SliderFloat3("QuadPos", (float*)&pos[entityNum], -50.0f, 50.0f);
 			ImGui::SliderFloat3("QuadScale", (float*)&scaleValues[entityNum], 0.0f, 5.0f);
 			ImGui::SliderFloat3("QuadRotation", (float*)&rotationValues[entityNum], 0.f, 360.0f);
@@ -267,6 +267,8 @@ void Application::Loop()
 		else {
 			ImGui::Text("Hello, you are in mode 2!");
 
+			ImGui::ColorEdit3("Box color", (float*)&colorB);
+
 			if (ImGui::Button("Object0")) {
 				entityNum = 0;
 				mode1 = !mode1;
@@ -279,6 +281,11 @@ void Application::Loop()
 
 			if (ImGui::Button("Camera")) {
 				entityNum = 2;
+				mode1 = !mode1;
+			}
+
+			if (ImGui::Button("Object2")) {
+				entityNum = 3;
 				mode1 = !mode1;
 			}
 
@@ -432,14 +439,30 @@ void Application::GameInit()
 		e->AddComponent<RigidBody>();
 		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
 		
-		
+		if (i == 1) {
 			e->AddComponent<BoxPush>();
 			e->GetComponent<BoxPush>()->Init();
-		
+		}
 		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 
 	}
+
+	 e = new Entity();
+	m_entities.push_back(e);
+	e->AddComponent(
+		new MeshRenderer(
+			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetShader("simple"),
+			Resources::GetInstance()->GetTexture("Wood.jpg"))
+	);
+	m = e->GetComponent<MeshRenderer>();
+	e->GetTransform()->SetPosition(glm::vec3(0, -10, -10));
+	e->AddComponent<RigidBody>();
+	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
+		100.f, 1.f, 100.f)));
+	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
+	e->GetTransform()->SetScale(glm::vec3(100.f, 1.f, 100.f));
 	
 }
 

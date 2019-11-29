@@ -32,5 +32,5 @@ void main()
 	   
 		c2 = vec4(((ambient + specular + diffuse1) + color1.rgb), 1.f);
 
-		gl_FragColor = clamp(c2, 0.0f, 1.0f); 
+		gl_FragColor = clamp(c2 + objectColor, 0.0f, 1.0f); 
 }

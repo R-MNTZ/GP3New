@@ -42,7 +42,7 @@ void Entity::AddComponent()
 	}
 	else
 	{
-		LOG_DEBUG("Can't add component, does not inherit from component", errType::ERROR);
+		LOG_DEBUG("Can't add component, does not inherit from component", logType::ERROR);
 
 	}
 }

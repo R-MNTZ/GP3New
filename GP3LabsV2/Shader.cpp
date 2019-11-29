@@ -30,7 +30,7 @@ GLuint Shader::LoadShaderFromFile(const std::string& fileName, SHADER_TYPE type)
 	file.open(fileName.c_str(), std::ios::in);
 	if (!file)
 	{
-		LOG_DEBUG("File could not be loaded", errType::ERROR);
+		LOG_DEBUG("File could not be loaded", logType::ERROR);
 		return 0;
 	}
 
@@ -42,7 +42,7 @@ GLuint Shader::LoadShaderFromFile(const std::string& fileName, SHADER_TYPE type)
 		file.seekg(std::ios::beg);
 		if (len == 0)
 		{
-			LOG_DEBUG("File has no contents", errType::ERROR);
+			LOG_DEBUG("File has no contents", logType::ERROR);
 			return 0;
 		}
 

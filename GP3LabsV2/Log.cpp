@@ -6,7 +6,7 @@
 
 char selectedType = 'a';
 
-void Log::Debug(const std::string& msg, errType logType, const char* file, int line)
+void Log::Debug(const std::string& msg, logType logType, const char* file, int line)
 {
 
 	static int count = 0;
@@ -24,13 +24,13 @@ void Log::Debug(const std::string& msg, errType logType, const char* file, int l
 	if (selectedType == 'a') {
 		std::cout << "LOG DEBUG(" << file << ", " << line << "): " << msg << std::endl;
 	}
-	else if (selectedType == 'e' && logType == errType::ERROR) {
+	else if (selectedType == 'e' && logType == logType::ERROR) {
 		std::cout << "LOG DEBUG(" << file << ", " << line << "): " << msg << std::endl;
 	}
-	else if (selectedType == 't' && logType == errType::TRACE) {
+	else if (selectedType == 't' && logType == logType::TRACE) {
 		std::cout << "LOG DEBUG(" << file << ", " << line << "): " << msg << std::endl;
 	}
-	else if (selectedType == 'w' && logType == errType::WARNING) {
+	else if (selectedType == 'w' && logType == logType::WARNING) {
 		std::cout << "LOG DEBUG(" << file << ", " << line << "): " << msg << std::endl;
 	}
 	else if (selectedType == 'n') {
