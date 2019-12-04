@@ -19,7 +19,7 @@ void main()
 	
 	gl_Position = MVP * vec4(pos, 1.0f);
 	texCoords0 = texCoords;
-	Normal = mat3(transpose(inverse(model))) * normal;
-	FragPos = vec3(model * vec4(pos, 1.0f));
+	Normal = normal;
+	FragPos = vec3(model * vec4(pos, 1.0));
 	
 }

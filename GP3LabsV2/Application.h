@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "Entity.h"
 
+
 #define WINDOW_W Application::GetInstance()->GetWindowWidth()
 #define WINDOW_H Application::GetInstance()->GetWindowHeight()
 
@@ -30,25 +31,21 @@ private:
 	AppState m_appState = AppState::INITILISING;
 	UiState m_uiState = UiState::SELECT;
 	float m_worldDeltaTime = 0.f;
-	std::vector<Entity*> m_entities;
+
 	Camera* m_mainCamera = nullptr;
 
-	//Scene graph variables
+	
 
-	int x, y;
-	bool lock = false;
-	int currentObj = 0;
-	glm::vec3 pos[5];
-	glm::vec3 scaleValues[5];
-	glm::vec3 rotationValues[5];
-	int entityNum;
+	
+	
 
 	//private functions
 	Application();
+	~Application();
 	void Init();
 	void OpenGlinit();
 	void Loop();
-	void Quit();
+	
 	void Update(float deltaTime);
 	void Render();
 
@@ -56,11 +53,16 @@ private:
 	void SetObjTransformAttribs();
 
 
+	glm::vec3 pos[15];
+	glm::vec3 scaleValues[15];
+	glm::vec3 rotationValues[15];
+	int entityNum;
 
+	SDL_GameController* controller;
 
 public:
 	//public functions
-	~Application();
+	
 	static Application* GetInstance();
 	void Run();
 
@@ -69,7 +71,14 @@ public:
 
 	inline Camera* GetCamera() { return m_mainCamera; }
 	void SetCamera(Camera* camera);
+	static SDL_Event event;
+	static std::vector<Entity*> m_entities;
+	void Quit();
 
+	//Scene graph variables
+	int x, y;
+	bool lock = false;
+	
 
 
 

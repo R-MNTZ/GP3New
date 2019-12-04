@@ -36,9 +36,10 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices)
 	//normals
 	SetUpAttrib(3, 3, GL_FLOAT, sizeof(glm::vec3) + sizeof(glm::vec4) + sizeof(glm::vec2));
 
+}
 
-
-
+Mesh::~Mesh() {
+	
 }
 
 void Mesh::SetUpAttrib(int index, int count, int type, size_t offset)

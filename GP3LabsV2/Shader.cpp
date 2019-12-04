@@ -11,8 +11,10 @@ Shader::Shader(const std::string& fileName, SHADER_TYPE type)
 
 Shader::~Shader()
 {
-	if (m_shader != 0)
+	if (m_shader != 0) {
 		glDeleteShader(m_shader);
+	}
+	
 }
 
 GLuint Shader::LoadShaderFromMemory(const char* pMem, SHADER_TYPE type)

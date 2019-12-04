@@ -59,14 +59,38 @@ void RigidBody::UpdateRigidBody()
 }
 
 void RigidBody::ForceUp() {
+	btVector3 force(0.0, 10.0, 0.0);
+	m_rigidBody->applyCentralForce(force);
+}
 
-	btVector3 force(0.0, 1.0, 0.0);
+void RigidBody::ForceDown() {
+	btVector3 force(0.0, -10.0, 0.0);
 	m_rigidBody->applyCentralForce(force);
 }
 
 void RigidBody::Torque() {
 	btVector3 force(0.0, 5.0, 0.0);
 	m_rigidBody->applyTorque(force);
+	//m_rigidBody->setGravity(btVector3(0,0,0));
+}
+
+void RigidBody::Torque2() {
+	btVector3 force(0.0, -5.0, 0.0);
+	m_rigidBody->applyTorque(force);
+	
+}
+
+void RigidBody::StopMovement() {
+	//m_rigidBody->setLinearFactor(btVector3(0, 0, 0));
+	
+	m_rigidBody->setActivationState(0);
+	
+}
+
+void RigidBody::ResumeMovement() {
+	
+	m_rigidBody->setActivationState(1);
+	
 }
 
 void BoxPush::OnUpdate(float deltaTime)
@@ -82,17 +106,10 @@ void BoxPush::OnStart()
 }
 
 
-void BoxPush::ForceUp2(float deltaTime) {
-	RigidBody* r = new RigidBody();
-	r->Get()->applyCentralForce(btVector3(0.0, 200.0, 0.0));
-	
-}
 
 
-void BoxPush::Nothing()
-{
-	std::cout << "this does nothing" << std::endl;
-}
+
+
 
 void BoxPush::Init() {
 	Physics::GetInstance()->AddBoxPush(this);

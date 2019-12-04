@@ -34,9 +34,8 @@ void Physics::PreUpdate()
 
 
 
-void Physics::AddForce(float deltaTime) {
-	PreUpdate();
-	m_world->stepSimulation(deltaTime, 2);
+void Physics::AddForce() {
+	
 
 	for (auto b : m_bp)
 	{
@@ -47,15 +46,38 @@ void Physics::AddForce(float deltaTime) {
 	}
 }
 
-void Physics::AddTorque(float deltaTime) {
-	PreUpdate();
-	m_world->stepSimulation(deltaTime, 2);
+void Physics::SubForce() {
+
+
+	for (auto b : m_bp)
+	{
+		for (auto r : m_rbodies)
+		{
+			r->ForceDown();
+		}
+	}
+}
+
+void Physics::AddTorque() {
+	
 
 	for (auto b : m_bp)
 	{
 		for (auto r : m_rbodies)
 		{
 			r->Torque();
+		}
+	}
+}
+
+void Physics::AddTorque2() {
+
+
+	for (auto b : m_bp)
+	{
+		for (auto r : m_rbodies)
+		{
+			r->Torque2();
 		}
 	}
 }

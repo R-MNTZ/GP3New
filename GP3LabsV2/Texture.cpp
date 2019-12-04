@@ -24,7 +24,7 @@ GLuint Texture::Load(const std::string& directory)
 		GL_ATTEMPT(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 		GL_ATTEMPT(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-		auto glChannels = GL_RGBA;
+		auto glChannels = GL_SRGB_ALPHA;
 		switch (nrChannels)
 		{
 		case 3:
@@ -53,16 +53,24 @@ Texture::Texture(std::string path)
 
 }
 
+Texture::~Texture() {
+	glDeleteTextures(1, &m_texture);
+}
+
 void Texture::Bind()
 {
-	static GLuint* texPointer;
-	if (texPointer != &m_texture)
+	
+	static GLuint* pointerT;
+	if (pointerT != &m_texture)
 	{
-		texPointer = &m_texture;
+		pointerT = &m_texture;
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 		LOG_DEBUG("binding texture", logType::ERROR);
 	}
+
+	
+	
 
 }
 

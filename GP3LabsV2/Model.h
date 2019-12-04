@@ -17,6 +17,7 @@ private:
 
 public:
 	Model(std::string path);
+	~Model();
 	std::vector<Mesh*> GetMeshes() { return m_meshes; };
 
 

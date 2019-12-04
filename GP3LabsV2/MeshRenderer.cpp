@@ -9,7 +9,7 @@
 
 
 
-MeshRenderer::MeshRenderer(Model* model, ShaderProgram* program, Texture* texture)
+MeshRenderer::MeshRenderer(std::shared_ptr<Model> model, std::shared_ptr<ShaderProgram> program, std::shared_ptr<Texture> texture)
 {
 	m_model = model;
 	
@@ -42,7 +42,8 @@ void MeshRenderer::OnRender()
 	glm::vec3 viewPos = Application::GetInstance()->GetCamera()->GetParentTransform()->GetPosition();
 	loc = glGetUniformLocation(m_program->Get(), "viewPos");
 	glUniform3f(loc, viewPos.x, viewPos.y, viewPos.z);
-	glm::mat4 mvp = Application::GetInstance()->GetCamera()->Get() * model;
+	glm::mat4 mvp = Application::GetInstance()->GetCamera()->GetProj() *
+		Application::GetInstance()->GetCamera()->GetView() * model;
 	 loc = glGetUniformLocation(m_program->Get(), "MVP");
 	glUniformMatrix4fv(loc, 1, false, (const GLfloat*)glm::value_ptr(mvp));
 	glm::vec3 oColor = glm::vec3(colorB.x, colorB.y, colorB.z);
@@ -54,6 +55,7 @@ void MeshRenderer::OnRender()
 	//Pass in Light values
 	Lighting* light = new Lighting();
 	light->passLightUniform();
+	delete light;
 
 
 	m_texture->Bind();
@@ -84,5 +86,9 @@ void MeshRenderer::OnStart()
 		Application::GetInstance()->SetCamera(a.m_camera);
 	}
 	*/
+}
+
+MeshRenderer::~MeshRenderer() {
+	
 }
 

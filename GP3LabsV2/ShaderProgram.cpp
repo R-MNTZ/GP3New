@@ -41,10 +41,10 @@ void ShaderProgram::Link()
 void ShaderProgram::Use()
 {
 	//TODO : Only bind program if it isn't already bound
-	static GLuint* progPointer;
-	if (progPointer != &m_program) {
-		progPointer = &m_program;
-		glUseProgram(*progPointer);
+	static GLuint* pointerSP;
+	if (pointerSP != &m_program) {
+		pointerSP = &m_program;
+		glUseProgram(*pointerSP);
 	}
 
 }

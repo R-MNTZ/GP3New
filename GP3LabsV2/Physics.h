@@ -31,8 +31,10 @@ public:
 	void AddRigidBody(RigidBody* r);
 	void AddBoxPush(BoxPush* b);
 	void PreUpdate();
-	void AddForce(float deltaTime);
-	void AddTorque(float deltaTime);
+	void AddForce();
+	void SubForce();
+	void AddTorque();
+	void AddTorque2();
 	void Update(float deltaTime);
 	void Quit();
 

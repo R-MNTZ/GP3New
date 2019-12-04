@@ -12,6 +12,7 @@ private:
 
 public:
 	Mesh(std::vector<Vertex> Vertices, std::vector<int> indices);
+	~Mesh();
 	void SetUpAttrib(int index, int count, int type, size_t offset);
 	void Bind();
 	int GetIndiciesCount() {

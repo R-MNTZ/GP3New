@@ -11,6 +11,8 @@ private:
 	static GLuint Load(const std::string& directory);
 public:
 	Texture(std::string path);
+	~Texture();
 	void Bind();
+	
 
 };

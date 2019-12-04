@@ -101,3 +101,7 @@ Model::Model(std::string path)
 	m_directory = path;
 	Load();
 }
+
+Model::~Model() {
+	
+}

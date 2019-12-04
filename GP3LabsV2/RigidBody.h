@@ -22,7 +22,12 @@ public:
 	virtual void UpdateParent();
 	virtual void UpdateRigidBody();
 	void ForceUp();
+	void ForceDown();
 	void Torque();
+	void Torque2();
+	void StopMovement();
+	void ResumeMovement();
+
 	btRigidBody* Get() { return m_rigidBody; }
 
 };
@@ -34,6 +39,6 @@ public:
 	virtual void OnRender() override;
 	virtual void OnStart() override;
 	void ForceUp2(float deltaTime);
-	void Nothing();
+	
 	void Init();
 };
