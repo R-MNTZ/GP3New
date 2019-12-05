@@ -66,7 +66,7 @@ void Texture::Bind()
 		pointerT = &m_texture;
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
-		LOG_DEBUG("binding texture", logType::ERROR);
+		
 	}
 
 	

@@ -9,6 +9,8 @@ Physics::Physics()
 	Init();
 }
 
+
+
 void Physics::Init()
 {
 	m_world->setGravity(btVector3(0, -9.81, 0));

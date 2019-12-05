@@ -51,6 +51,7 @@ private:
 
 	void GameInit();
 	void SetObjTransformAttribs();
+	void UserInterface();
 
 
 	glm::vec3 pos[15];
@@ -58,7 +59,9 @@ private:
 	glm::vec3 rotationValues[15];
 	int entityNum;
 
-	SDL_GameController* controller;
+	SDL_Joystick* controller;
+	SDL_GameController* gController;
+	
 
 public:
 	//public functions
@@ -78,6 +81,7 @@ public:
 	//Scene graph variables
 	int x, y;
 	bool lock = false;
+	SDL_Haptic* controllerHaptic;
 	
 
 

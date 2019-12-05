@@ -24,7 +24,7 @@
 
 Application* Application::m_application = nullptr;
 glm::vec3 colorB(0.f, 0.f, 0.f);
-int gamma = 0;
+int gamma = 1;
 SDL_Event Application::event;
 std::vector<Entity*> Application::m_entities;
 
@@ -57,13 +57,27 @@ void Application::Init()
 		SDL_WINDOWPOS_CENTERED, m_windowWidth, m_windowHeight, SDL_WINDOW_OPENGL);
 
 	SDL_CaptureMouse(SDL_TRUE);
+	gController = nullptr;
 	controller = nullptr;
+	controllerHaptic = nullptr;
 
 	for (int i = 0; i < SDL_NumJoysticks(); i++) {
-		controller = SDL_GameControllerOpen(i);
+		controller = SDL_JoystickOpen(i);
+		
+		LOG_DEBUG("CONTROLLER CONNECTED", logType::TRACE);
+
+		controllerHaptic = SDL_HapticOpenFromJoystick(controller);
+		SDL_HapticRumbleInit(controllerHaptic);
+		break;
+	}
+
+	for (int i = 0; i < SDL_NumJoysticks(); i++) {
+		gController = SDL_GameControllerOpen(i);
+		
 		LOG_DEBUG("CONTROLLER CONNECTED", logType::TRACE);
 		break;
 	}
+
 
 	OpenGlinit();
 	GameInit();
@@ -112,8 +126,8 @@ void Application::OpenGlinit()
 
 
 	//turn on back face culling
-	GL_ATTEMPT(glEnable(GL_CULL_FACE));
-	GL_ATTEMPT(glCullFace(GL_BACK));
+	//GL_ATTEMPT(glEnable(GL_CULL_FACE));
+	//GL_ATTEMPT(glCullFace(GL_BACK));
 
 	glViewport(0, 0, (GLsizei)m_windowWidth, (GLsizei)m_windowHeight);
 
@@ -125,28 +139,10 @@ void Application::Loop()
 
 	auto prevTicks = std::chrono::high_resolution_clock::now();
 	
-	
-
-	glm::vec3 xAxis;
-	xAxis = glm::vec3(1, 0, 0);
-
-	xAxis = glm::normalize(xAxis);
-	glm::quat rot;
-	float rotateA = 15.0f;
-	float rotateD = -15.0f;
-
-
-
 	//glm::quat result;
 
 	while (m_appState != AppState::QUITTING)
 	{
-		auto currentTicks = std::chrono::high_resolution_clock::now();
-
-		float deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(currentTicks -
-			prevTicks).count() / 100000;
-		m_worldDeltaTime = deltaTime;
-		prevTicks = currentTicks;
 
 		SetObjTransformAttribs();
 		//imgui 
@@ -163,11 +159,16 @@ void Application::Loop()
 				break;
 
 			case SDL_CONTROLLERBUTTONDOWN:
+			
 				INPUT->ControllerBtn();
 				break;
 
+			
 				
+			
+		
 			case SDL_CONTROLLERAXISMOTION:
+				
 				INPUT->ControllerAxis();
 				break;
 
@@ -177,7 +178,7 @@ void Application::Loop()
 
 				break;
 
-				//record when the user oresses a key
+				//record when the user presses a key
 			case SDL_KEYUP:
 				INPUT->GetKeyUp(event.key.keysym.sym);
 				INPUT->SetKey(event.key.keysym.sym, false);
@@ -190,8 +191,13 @@ void Application::Loop()
 
 			
 		}
+		UserInterface();
+		auto currentTicks = std::chrono::high_resolution_clock::now();
 
-
+		float deltaTime = (float)std::chrono::duration_cast<std::chrono::microseconds>(currentTicks -
+			prevTicks).count() / 100000;
+		m_worldDeltaTime = deltaTime;
+		prevTicks = currentTicks;
 
 		Physics::GetInstance()->Update(deltaTime);
 		//update and render all entities 
@@ -200,100 +206,7 @@ void Application::Loop()
 
 
 
-		if (ImGui::Button("Select Component")) {
-			m_uiState = UiState::SELECT;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Edit Component")) {
-			m_uiState = UiState::EDITCOMP;
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Edit all Components")) {
-			m_uiState = UiState::EDITALL;
-		}
-
-
-		if (m_uiState == UiState::EDITCOMP) {
-			ImGui::Text("Hello, world!");
-
-
-			ImGui::SliderFloat3("QuadPos", (float*)&pos[entityNum], -50.0f, 50.0f);
-			ImGui::SliderFloat3("QuadScale", (float*)&scaleValues[entityNum], 0.0f, 5.0f);
-			ImGui::SliderFloat3("QuadRotation", (float*)&rotationValues[entityNum], 0.f, 360.0f);
-
-			if (ImGui::Button("Rotate Object")) {
-				rot = glm::angleAxis(glm::radians(rotateD), xAxis);
-				m_entities.at(entityNum)->GetTransform()->AddRotation(rot);
-			}
-
-
-			ImGui::Checkbox("FPS camera", &lock);
-
-			if (entityNum > 2) {
-				if (ImGui::Button("De-Activte Physics")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
-					m_entities.at(entityNum)->GetComponent<RigidBody>()->StopMovement();
-				}
-
-				if (ImGui::Button("Re-Activte Physics")) {
-					m_entities.at(entityNum)->GetComponent<RigidBody>()->ResumeMovement();
-				}
-
-
-			}
-			if (ImGui::Button("Reset Camera")) {
-				m_entities.at(2)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
-				
-			}
-
-
-
-
-		}
-		else if (m_uiState == UiState::SELECT) {
-
-
-
-
-			if (ImGui::Button("Object0")) {
-				entityNum = 0;
-				m_uiState = UiState::EDITCOMP;
-			}
-
-			if (ImGui::Button("Object1")) {
-				entityNum = 1;
-				m_uiState = UiState::EDITCOMP;
-			}
-
-			if (ImGui::Button("Camera")) {
-				entityNum = 2;
-				m_uiState = UiState::EDITCOMP;
-			}
-			for (int i = 3; i < 12; i++) {
-				int objNum = i - 1;
-				std::string a = "Object ";
-				a.append(std::to_string(i - 1));
-				char chararray[10];
-				strcpy(chararray, a.c_str());
-				if (ImGui::Button(chararray)) {
-					entityNum = i;
-					m_uiState = UiState::EDITCOMP;
-				}
-			}
-			
-
-		}
-		else if (m_uiState == UiState::EDITALL) {
-			ImGui::ColorEdit3("Box color", (float*)&colorB);
-			if (ImGui::Button("Apply Gamma Correction"))
-			{
-				if (gamma == 1) {
-					gamma = 0;
-				}
-				else if (gamma == 0) {
-					gamma = 1;
-				}
-			}
-		}
+		
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
@@ -306,6 +219,12 @@ void Application::Loop()
 
 void Application::Quit()
 {
+	//Close Controller & Joystick & Haptic
+	SDL_JoystickClose(controller);
+	SDL_GameControllerClose(gController);
+	SDL_HapticClose(controllerHaptic);
+	controller, gController, controllerHaptic = NULL;
+
 	//Close imgui
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
@@ -320,11 +239,11 @@ void Application::Quit()
 }
 
 Application::~Application() {
-	delete m_mainCamera;
+
 	delete[] pos;
 	delete[] scaleValues;
 	delete[] rotationValues;
-	delete controller;
+	
 }
 
 Application* Application::GetInstance()
@@ -374,9 +293,14 @@ void Application::GameInit()
 
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
+	Resources::GetInstance()->AddModel("monkey3.obj");
+	Resources::GetInstance()->AddModel("heart.obj");
+	Resources::GetInstance()->AddModel("lego.obj");
+	Resources::GetInstance()->AddModel("star.obj");
 	Resources::GetInstance()->AddTexture("Wood.jpg");
 	Resources::GetInstance()->AddTexture("brick.jpg");
-	//Resources::GetInstance()->AddTexture("brickN.jpg");
+	Resources::GetInstance()->AddTexture("sky.jpg");
+	Resources::GetInstance()->AddTexture("lava.jpg");
 	Resources::GetInstance()->AddShader(std::make_shared<ShaderProgram>(ASSET_PATH +
 		"simple_VERT.glsl", ASSET_PATH + "simple_FRAG.glsl"), "simple");
 	
@@ -389,18 +313,18 @@ void Application::GameInit()
 	m_entities.push_back(e);
 	e->AddComponent(
 		new MeshRenderer(
-			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetModel("star.obj"),
 			Resources::GetInstance()->GetShader("simple"),
-			Resources::GetInstance()->GetTexture("Wood.jpg"))
+			Resources::GetInstance()->GetTexture("lava.jpg"))
 	);
 	MeshRenderer* m = e->GetComponent<MeshRenderer>();
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
+	e->GetTransform()->SetScale(glm::vec3(0.25f, 0.25f, 0.25f));
 	e->AddComponent<RigidBody>();
 	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
-		1.f, 1.f, 1.f)));
+		1.f, 0.5f, 1.f)));
 
 	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
-	e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
 	pos[0] = e->GetTransform()->GetPosition();
 	scaleValues[0] = e->GetTransform()->GetScale();
 	glm::vec3 rotNew = glm::vec3(0, 0, 0);
@@ -411,13 +335,14 @@ void Application::GameInit()
 	m_entities.push_back(e);
 	e->AddComponent(
 		new MeshRenderer(
-			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetModel("heart.obj"),
 			Resources::GetInstance()->GetShader("simple"),
 			Resources::GetInstance()->GetTexture("Wood.jpg"))
 	);
 
 
 	e->GetTransform()->SetPosition(glm::vec3(3, 0, -10));
+	e->GetTransform()->SetScale(glm::vec3(0.05f, 0.05f, 0.05f));
 
 	pos[1] = e->GetTransform()->GetPosition();
 	scaleValues[1] = e->GetTransform()->GetScale();
@@ -440,14 +365,33 @@ void Application::GameInit()
 	{
 		e = new Entity();
 		m_entities.push_back(e);
-		e->AddComponent(
-			new MeshRenderer(
-				Resources::GetInstance()->GetModel("cube.obj"),
-				Resources::GetInstance()->GetShader("simple"),
-				Resources::GetInstance()->GetTexture("Wood.jpg"))
-		);
+		if (i == 8) {
+			e->AddComponent(
+				new MeshRenderer(
+					Resources::GetInstance()->GetModel("monkey3.obj"),
+					Resources::GetInstance()->GetShader("simple"),
+					Resources::GetInstance()->GetTexture("Wood.jpg"))
+			);
+		}
+		else if (i == 9) {
+			e->AddComponent(
+				new MeshRenderer(
+					Resources::GetInstance()->GetModel("lego.obj"),
+					Resources::GetInstance()->GetShader("simple"),
+					Resources::GetInstance()->GetTexture("Wood.jpg"))
+			);
+		}
+		else {
+			e->AddComponent(
+				new MeshRenderer(
+					Resources::GetInstance()->GetModel("cube.obj"),
+					Resources::GetInstance()->GetShader("simple"),
+					Resources::GetInstance()->GetTexture("Wood.jpg"))
+			);
+		}
+		
 
-		e->GetTransform()->SetPosition(glm::vec3(0, i + 1.f, -10));
+		e->GetTransform()->SetPosition(glm::vec3(0, i + 10.f, -10));
 		e->AddComponent<RigidBody>();
 		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
 
@@ -481,7 +425,21 @@ void Application::GameInit()
 		100.f, 1.f, 100.f)));
 	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 	e->GetTransform()->SetScale(glm::vec3(100.f, 1.f, 100.f));
-	//Resources::GetInstance()->ReleaseResources();
+	
+
+	e = new Entity();
+	m_entities.push_back(e);
+	e->AddComponent(
+		new MeshRenderer(
+			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetShader("simple"),
+			Resources::GetInstance()->GetTexture("sky.jpg"))
+	);
+	m = e->GetComponent<MeshRenderer>();
+	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
+	
+	e->GetTransform()->SetScale(glm::vec3(500.f, 500.f, 500.f));
+	
 
 	
 
@@ -513,11 +471,12 @@ void Application::SetObjTransformAttribs()
 			m_entities.at(entityNum)->GetTransform()->SetPosition(pos[entityNum]);
 		}
 		pos[entityNum] = m_entities.at(entityNum)->GetTransform()->GetPosition();
-		for (int i = 3; i < 12; i++) {
-			pos[i] = m_entities.at(i)->GetTransform()->GetPosition();
-		}
+		
 	}
 
+	for (int i = 3; i < 13; i++) {
+		pos[i] = m_entities.at(i)->GetTransform()->GetPosition();
+	}
 
 
 	//Scale
@@ -542,6 +501,134 @@ void Application::SetObjTransformAttribs()
 
 		
 	
+}
+
+void Application::UserInterface() {
+	if (ImGui::Button("Select Component")) {
+		m_uiState = UiState::SELECT;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edit Component")) {
+		m_uiState = UiState::EDITCOMP;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Edit all Components")) {
+		m_uiState = UiState::EDITALL;
+	}
+
+
+	if (m_uiState == UiState::EDITCOMP) {
+		ImGui::Text("Hello, world!");
+
+
+		ImGui::SliderFloat3("Position", (float*)&pos[entityNum], -50.0f, 50.0f);
+		ImGui::SliderFloat3("Scale", (float*)&scaleValues[entityNum], 0.0f, 5.0f);
+		ImGui::SliderFloat3("Rotation", (float*)&rotationValues[entityNum], 0.f, 360.0f);
+
+
+
+		if (entityNum != 2) {
+			ImGui::Checkbox("FPS camera", &lock);
+		}
+
+		if (entityNum > 2) {
+			if (ImGui::Button("De-Activte Physics")) {                          // Buttons return true when clicked (NB: most widgets return true when edited/activated)
+				m_entities.at(entityNum)->GetComponent<RigidBody>()->StopMovement();
+			}
+
+			if (ImGui::Button("Re-Activte Physics")) {
+				m_entities.at(entityNum)->GetComponent<RigidBody>()->ResumeMovement();
+			}
+
+
+		}
+		if (ImGui::Button("Reset Camera")) {
+			m_entities.at(2)->GetTransform()->SetPosition(glm::vec3(0.f, 0.f, 0.f));
+
+		}
+
+
+
+
+	}
+	else if (m_uiState == UiState::SELECT) {
+
+
+
+
+		if (ImGui::Button("Object0")) {
+			entityNum = 0;
+			m_uiState = UiState::EDITCOMP;
+		}
+
+		if (ImGui::Button("Object1")) {
+			entityNum = 1;
+			m_uiState = UiState::EDITCOMP;
+		}
+
+		if (ImGui::Button("Camera")) {
+			entityNum = 2;
+			m_uiState = UiState::EDITCOMP;
+		}
+		for (int i = 3; i < 13; i++) {
+			int objNum = i - 1;
+			std::string a = "Object ";
+			a.append(std::to_string(i - 1));
+			char chararray[10];
+			strcpy(chararray, a.c_str());
+			if (ImGui::Button(chararray)) {
+				entityNum = i;
+				m_uiState = UiState::EDITCOMP;
+			}
+		}
+
+
+	}
+	else if (m_uiState == UiState::EDITALL) {
+		ImGui::ColorEdit3("Box color", (float*)&colorB);
+		if (ImGui::Button("Toggle Gamma Correction"))
+		{
+			if (gamma == 1) {
+				gamma = 0;
+			}
+			else if (gamma == 0) {
+				gamma = 1;
+			}
+		}
+
+		ImGui::Text("Skybox");
+		if (ImGui::Button("Brick Wall")) {
+			m_entities.at(14)->AddComponent(new MeshRenderer(
+				Resources::GetInstance()->GetModel("cube.obj"),
+				Resources::GetInstance()->GetShader("simple"),
+				Resources::GetInstance()->GetTexture("brick.jpg"))
+			);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Sky")) {
+			m_entities.at(14)->AddComponent(new MeshRenderer(
+				Resources::GetInstance()->GetModel("cube.obj"),
+				Resources::GetInstance()->GetShader("simple"),
+				Resources::GetInstance()->GetTexture("sky.jpg"))
+			);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Wood")) {
+			m_entities.at(14)->AddComponent(new MeshRenderer(
+				Resources::GetInstance()->GetModel("cube.obj"),
+				Resources::GetInstance()->GetShader("simple"),
+				Resources::GetInstance()->GetTexture("Wood.jpg"))
+			);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Lava")) {
+			m_entities.at(14)->AddComponent(new MeshRenderer(
+				Resources::GetInstance()->GetModel("cube.obj"),
+				Resources::GetInstance()->GetShader("simple"),
+				Resources::GetInstance()->GetTexture("lava.jpg"))
+			);
+		}
+	}
 }
 
 

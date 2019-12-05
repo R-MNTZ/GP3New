@@ -54,3 +54,7 @@ void Camera::SetProjOrtho(float left, float right, float bottom, float top, floa
 	m_projMatrix = glm::ortho(left, right, bottom, top, nearPlane, farPlane);
 
 }
+
+Camera::~Camera() {
+	delete m_parentTransform;
+}

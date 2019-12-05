@@ -8,6 +8,7 @@ class Input
 {
 private:
 	Input();
+	~Input();
 	static Input* m_instance;
 	InputState m_state;
 	const int JOYSTICK_DEAD_ZONE = 3000;
@@ -32,5 +33,6 @@ public:
 	void Mouse();
 	void ControllerBtn();
 	void ControllerAxis();
+	
 
 };

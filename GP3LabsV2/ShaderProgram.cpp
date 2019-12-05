@@ -40,7 +40,7 @@ void ShaderProgram::Link()
 
 void ShaderProgram::Use()
 {
-	//TODO : Only bind program if it isn't already bound
+	
 	static GLuint* pointerSP;
 	if (pointerSP != &m_program) {
 		pointerSP = &m_program;

@@ -29,6 +29,7 @@ private:
 	float m_right = 0;
 	float m_top = 0;
 	Camera();
+	~Camera();
 
 public:
 	Camera(Transform* parent, CameraType type = CameraType::PERSPECTIVE);

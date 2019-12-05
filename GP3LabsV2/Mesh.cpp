@@ -50,10 +50,10 @@ void Mesh::SetUpAttrib(int index, int count, int type, size_t offset)
 void Mesh::Bind()
 {
 
-	static GLuint* vaoPointer;
-	if (vaoPointer != &m_vao) {
-		vaoPointer = &m_vao;
-		GL_ATTEMPT(glBindVertexArray(*vaoPointer));
+	static GLuint* pointerVertexAO;
+	if (pointerVertexAO != &m_vao) {
+		pointerVertexAO = &m_vao;
+		GL_ATTEMPT(glBindVertexArray(*pointerVertexAO));
 
 	}
 

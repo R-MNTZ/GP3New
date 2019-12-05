@@ -12,7 +12,7 @@ class MeshRenderer : public Component
 	std::shared_ptr<Model> m_model;
 	std::shared_ptr<ShaderProgram> m_program;
 
-	int* a;
+	
 
 
 public:

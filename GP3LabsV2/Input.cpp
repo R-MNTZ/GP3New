@@ -10,6 +10,11 @@ Input::Input()
 {
 }
 
+Input::~Input() {
+	delete m_instance;
+	delete GetInstance();
+}
+
 Input* Input::GetInstance()
 {
 	if (m_instance == nullptr)
@@ -134,23 +139,28 @@ void Input::ControllerBtn() {
 	switch (Application::event.cbutton.button) {
 		
 	case SDL_CONTROLLER_BUTTON_A:
-		std::cout << "a" << std::endl;
+		Physics::GetInstance()->SubForce();
+		SDL_HapticRumblePlay(Application::GetInstance()->controllerHaptic, 0.5, 50);
 		break;
 
 	
 	case SDL_CONTROLLER_BUTTON_B:
-		std::cout << "b" << std::endl;
+		Physics::GetInstance()->AddTorque();
+		SDL_HapticRumblePlay(Application::GetInstance()->controllerHaptic, 0.5, 50);
 		break;
 
 	case SDL_CONTROLLER_BUTTON_X:
-		std::cout << "x" << std::endl;
+		Physics::GetInstance()->AddTorque2();
+		SDL_HapticRumblePlay(Application::GetInstance()->controllerHaptic, 0.5, 50);
 		break;
 
 	case SDL_CONTROLLER_BUTTON_Y:
-		std::cout << "y" << std::endl;
+		Physics::GetInstance()->AddForce();
+		SDL_HapticRumblePlay(Application::GetInstance()->controllerHaptic, 0.5, 50);
 		break;
 
 	case SDL_CONTROLLER_BUTTON_DPAD_UP:
+		
 		Physics::GetInstance()->AddForce();
 		break;
 
@@ -165,20 +175,37 @@ void Input::ControllerBtn() {
 	case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
 		Physics::GetInstance()->AddTorque2();
 		break;
+
+	case SDL_CONTROLLER_BUTTON_LEFTSHOULDER:
+
+		
+		break;
+
+	case SDL_CONTROLLER_BUTTON_RIGHTSHOULDER:
+		
+
+		break;
 	}
 }
 
 void Input::ControllerAxis()
 {
+	
+		
+	
+	float value = Application::event.jaxis.value / 10000;
 	switch (Application::event.jaxis.axis) {
-
+		
+		
 		//x axis
 	case 0:
 		if (Application::event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
-			Physics::GetInstance()->AddTorque2();
+			
+			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
+
 		}
 		else if (Application::event.jaxis.value > JOYSTICK_DEAD_ZONE) {
-			Physics::GetInstance()->AddTorque();
+			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
 		}
 
 		break;
@@ -186,13 +213,14 @@ void Input::ControllerAxis()
 		//y axis
 	case 1:
 		if (Application::event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
-			Physics::GetInstance()->AddForce();
+			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.0f, -value, 0.f));
 		}
 		else if (Application::event.jaxis.value > JOYSTICK_DEAD_ZONE) {
-			Physics::GetInstance()->SubForce();
+			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.0f, -value, 0.f));
 		}
 		break;
 	}
+
 }
 
 

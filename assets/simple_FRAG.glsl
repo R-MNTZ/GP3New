@@ -23,7 +23,7 @@ void main()
 {
 	
    
-   vec3 gammaTex = pow(texture2D(diffuse, texCoords0).rgb, vec3(2.2));
+    vec3 gammaTex = pow(texture2D(diffuse, texCoords0).rgb, vec3(2.2));
     vec4 c1 = vec4(gammaTex, 1.0f);
 
 	//ambient

@@ -42,8 +42,7 @@ void MeshRenderer::OnRender()
 	glm::vec3 viewPos = Application::GetInstance()->GetCamera()->GetParentTransform()->GetPosition();
 	loc = glGetUniformLocation(m_program->Get(), "viewPos");
 	glUniform3f(loc, viewPos.x, viewPos.y, viewPos.z);
-	glm::mat4 mvp = Application::GetInstance()->GetCamera()->GetProj() *
-		Application::GetInstance()->GetCamera()->GetView() * model;
+	glm::mat4 mvp = Application::GetInstance()->GetCamera()->Get() * model;
 	 loc = glGetUniformLocation(m_program->Get(), "MVP");
 	glUniformMatrix4fv(loc, 1, false, (const GLfloat*)glm::value_ptr(mvp));
 	glm::vec3 oColor = glm::vec3(colorB.x, colorB.y, colorB.z);
@@ -55,7 +54,7 @@ void MeshRenderer::OnRender()
 	//Pass in Light values
 	Lighting* light = new Lighting();
 	light->passLightUniform();
-	delete light;
+	
 
 
 	m_texture->Bind();
