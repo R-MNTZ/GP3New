@@ -10,4 +10,5 @@ private:
 
 public:
 	CapsuleShape(float radius, float height);
+	~CapsuleShape();
 };

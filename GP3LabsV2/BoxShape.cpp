@@ -7,3 +7,7 @@ BoxShape::BoxShape(glm::vec3 halfExtents)
 	m_shape = new btBoxShape(btVector3(halfExtents.x, halfExtents.y, halfExtents.z));
 	m_type = CShapeType::BOX;
 }
+
+BoxShape::~BoxShape() {
+	delete m_shape;
+}

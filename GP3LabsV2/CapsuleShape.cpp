@@ -8,3 +8,7 @@ CapsuleShape::CapsuleShape(float radius, float height)
 	m_shape = new btCapsuleShape(radius, height);
 	m_type = CShapeType::CAPSULE;
 }
+
+CapsuleShape::~CapsuleShape() {
+	delete m_shape;
+}

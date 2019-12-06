@@ -243,6 +243,7 @@ Application::~Application() {
 	delete[] pos;
 	delete[] scaleValues;
 	delete[] rotationValues;
+	delete m_application;
 	
 }
 
@@ -286,11 +287,6 @@ void Application::Render()
 
 void Application::GameInit()
 {
-
-
-
-
-
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
 	Resources::GetInstance()->AddModel("monkey3.obj");
@@ -439,9 +435,10 @@ void Application::GameInit()
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, 0));
 	
 	e->GetTransform()->SetScale(glm::vec3(500.f, 500.f, 500.f));
-	
 
-	
+	e = new Entity();
+	delete e;
+
 
 }
 

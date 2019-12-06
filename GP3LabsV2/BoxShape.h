@@ -9,4 +9,5 @@ private:
 
 public:
 	BoxShape(glm::vec3 halfExtents);
+	~BoxShape();
 };

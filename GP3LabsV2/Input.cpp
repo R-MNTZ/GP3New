@@ -12,7 +12,7 @@ Input::Input()
 
 Input::~Input() {
 	delete m_instance;
-	delete GetInstance();
+	
 }
 
 Input* Input::GetInstance()
