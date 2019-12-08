@@ -120,16 +120,16 @@ void Input::Mouse() {
 
 	if (Application::GetInstance()->lock) {
 		if (Application::GetInstance()->x > oldX) {
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.2f, 0.f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.2f, 0.f, 0.f));
 		}
 		else {
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(-0.2f, 0.f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(-0.2f, 0.f, 0.f));
 		}
 		if (Application::GetInstance()->y > oldY) {
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, -0.2f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, -0.2f, 0.f));
 		}
 		else {
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, 0.2f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(0.f, 0.2f, 0.f));
 		}
 	}
 	MoveMouse(glm::ivec2(Application::event.motion.xrel, Application::event.motion.yrel));
@@ -201,11 +201,11 @@ void Input::ControllerAxis()
 	case 0:
 		if (Application::event.jaxis.value < -JOYSTICK_DEAD_ZONE) {
 			
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
 
 		}
 		else if (Application::event.jaxis.value > JOYSTICK_DEAD_ZONE) {
-			Application::m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
+			Application::GetInstance()->m_entities.at(2)->GetTransform()->AddPosition(glm::vec3(value, 0.f, 0.f));
 		}
 
 		break;

@@ -2,7 +2,6 @@
 #include "Application.h"
 #include "Log.h"
 #include "MeshRenderer.h"
-#include "Quad.h"
 #include "CameraComp.h"
 #include "Input.h"
 #include "Resources.h"
@@ -15,15 +14,18 @@
 #include "ConeShape.h"
 #include "RigidBody.h"
 #include "Lighting.h"
+#include "BoxPush.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
 
 
 #include <string>
 
-
+//declaring static and external variables
 Application* Application::m_application = nullptr;
 glm::vec3 colorB(0.f, 0.f, 0.f);
+glm::vec3 lightColor(1.f, 1.f, 1.f);
+glm::vec3 lightPosition(0.f, 0.f, 0.f);
 int gamma = 1;
 float counter = 1.0f;
 SDL_Event Application::event;
@@ -58,34 +60,35 @@ void Application::Init()
 	m_window = SDL_CreateWindow("GP3-GAME", SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED, m_windowWidth, m_windowHeight, SDL_WINDOW_OPENGL);
 
+
+	//Set up Controller/Joystick
 	SDL_CaptureMouse(SDL_TRUE);
 	gController = nullptr;
 	controller = nullptr;
 	controllerHaptic = nullptr;
 
-	for (int i = 0; i < SDL_NumJoysticks(); i++) {
-		controller = SDL_JoystickOpen(i);
-		
-		LOG_DEBUG("CONTROLLER CONNECTED", logType::TRACE);
+	if (SDL_NumJoysticks > 0) {
+		for (int i = 0; i < SDL_NumJoysticks(); i++) {
+			controller = SDL_JoystickOpen(i);
+			gController = SDL_GameControllerOpen(i);
+			LOG_DEBUG("CONTROLLER CONNECTED", logType::TRACE);
 
-		controllerHaptic = SDL_HapticOpenFromJoystick(controller);
-		SDL_HapticRumbleInit(controllerHaptic);
-		break;
+			controllerHaptic = SDL_HapticOpenFromJoystick(controller);
+			SDL_HapticRumbleInit(controllerHaptic);
+			break;
+		}
+	}
+	 if (SDL_NumJoysticks() == 0) {
+		LOG_DEBUG("Hello! You might want to connect a controller.", logType::TRACE);
 	}
 
-	for (int i = 0; i < SDL_NumJoysticks(); i++) {
-		gController = SDL_GameControllerOpen(i);
-		
-		LOG_DEBUG("CONTROLLER CONNECTED", logType::TRACE);
-		break;
-	}
+	
 
 
 	OpenGlinit();
 	GameInit();
 
-	//std::cout << "What type of logs do you want to see? a = all, e = error, w = warning, t = trace n = none" << std::endl;
-	//std::cin >> displayLogType;
+	
 }
 
 void Application::OpenGlinit()
@@ -126,7 +129,7 @@ void Application::OpenGlinit()
 	glEnable(GL_BLEND);
 	GL_ATTEMPT(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-
+	//face culling turned off for skybox
 	//turn on back face culling
 	//GL_ATTEMPT(glEnable(GL_CULL_FACE));
 	//GL_ATTEMPT(glCullFace(GL_BACK));
@@ -141,7 +144,7 @@ void Application::Loop()
 
 	auto prevTicks = std::chrono::high_resolution_clock::now();
 	
-	//glm::quat result;
+	
 
 	while (m_appState != AppState::QUITTING)
 	{
@@ -160,6 +163,7 @@ void Application::Loop()
 				m_appState = AppState::QUITTING;
 				break;
 
+			//Controller Buttons
 			case SDL_CONTROLLERBUTTONDOWN:
 			
 				INPUT->ControllerBtn();
@@ -168,24 +172,26 @@ void Application::Loop()
 			
 				
 			
-		
+		//Controller axis
 			case SDL_CONTROLLERAXISMOTION:
 				
 				INPUT->ControllerAxis();
 				break;
 
+				//Key press
 			case SDL_KEYDOWN:
 				INPUT->GetKeyDown(event.key.keysym.sym);
 				INPUT->SetKey(event.key.keysym.sym, true);
 
 				break;
 
-				//record when the user presses a key
+				//Key release
 			case SDL_KEYUP:
 				INPUT->GetKeyUp(event.key.keysym.sym);
 				INPUT->SetKey(event.key.keysym.sym, false);
 				break;
 
+			//Mouse movement
 			case SDL_MOUSEMOTION:
 				INPUT->Mouse();
 				break;
@@ -193,6 +199,7 @@ void Application::Loop()
 
 			
 		}
+
 		UserInterface();
 		auto currentTicks = std::chrono::high_resolution_clock::now();
 
@@ -301,10 +308,10 @@ void Application::GameInit()
 {
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
+	Resources::GetInstance()->AddModel("cube2.obj");
 	Resources::GetInstance()->AddModel("rim.obj");
 	Resources::GetInstance()->AddModel("heart.obj");
 	Resources::GetInstance()->AddModel("spider.obj");
-	Resources::GetInstance()->AddModel("lego.obj");
 	Resources::GetInstance()->AddModel("star.obj");
 	Resources::GetInstance()->AddTexture("Wood.jpg");
 	Resources::GetInstance()->AddTexture("brick.jpg");
@@ -330,8 +337,7 @@ void Application::GameInit()
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
 	e->GetTransform()->SetScale(glm::vec3(0.1f, 0.1f, 0.1f));
 	e->AddComponent<RigidBody>();
-	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
-		1.f, 0.5f, 1.f)));
+	e->GetComponent<RigidBody>()->Init(new SphereShape(1.2f));
 
 	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
 	pos[0] = e->GetTransform()->GetPosition();
@@ -344,17 +350,20 @@ void Application::GameInit()
 	m_entities.push_back(e);
 	e->AddComponent(
 		new MeshRenderer(
-			Resources::GetInstance()->GetModel("heart.obj"),
+			Resources::GetInstance()->GetModel("star.obj"),
 			Resources::GetInstance()->GetShader("simple"),
 			Resources::GetInstance()->GetTexture("brick.jpg"))
 	);
 
 
 	e->GetTransform()->SetPosition(glm::vec3(3, 0, -10));
-	e->GetTransform()->SetScale(glm::vec3(0.05f, 0.05f, 0.05f));
+	e->GetTransform()->SetScale(glm::vec3(0.2f, 0.2f, 0.2f));
+	
+
 
 	pos[1] = e->GetTransform()->GetPosition();
 	scaleValues[1] = e->GetTransform()->GetScale();
+	
 
 	rotationValues[1] = rotNew;
 
@@ -377,39 +386,48 @@ void Application::GameInit()
 		if (i == 8) {
 			e->AddComponent(
 				new MeshRenderer(
-					Resources::GetInstance()->GetModel("lego.obj"),
+					Resources::GetInstance()->GetModel("spider.obj"),
 					Resources::GetInstance()->GetShader("simple"),
 					Resources::GetInstance()->GetTexture("lava.jpg"))
 			);
+			e->GetTransform()->SetScale(glm::vec3(0.01f, 0.01f, 0.01f));
+			e->AddComponent<RigidBody>();
+			e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.2f, 1.2f, 1.4f)));
 		}
 		else if (i == 9) {
 			e->AddComponent(
 				new MeshRenderer(
-					Resources::GetInstance()->GetModel("lego.obj"),
+					Resources::GetInstance()->GetModel("heart.obj"),
 					Resources::GetInstance()->GetShader("simple"),
 					Resources::GetInstance()->GetTexture("lava.jpg"))
 			);
+			e->GetTransform()->SetScale(glm::vec3(0.25f, 0.25f, 0.25f));
+			e->AddComponent<RigidBody>();
+			e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(0.3f, 0.3f, 0.3f)));
 		}
 		else {
 			e->AddComponent(
 				new MeshRenderer(
-					Resources::GetInstance()->GetModel("cube.obj"),
+					Resources::GetInstance()->GetModel("cube2.obj"),
 					Resources::GetInstance()->GetShader("simple"),
 					Resources::GetInstance()->GetTexture("Wood.jpg"))
+				
 			);
+			e->GetTransform()->SetScale(glm::vec3(0.022f, 0.022f, 0.022f));
+			e->AddComponent<RigidBody>();
+			e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
 		}
 		
 
 		e->GetTransform()->SetPosition(glm::vec3(0, i + 10.f, -10));
-		e->AddComponent<RigidBody>();
-		e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(1.f, 1.f, 1.f)));
+		
 
-
-		e->AddComponent<BoxPush>();
-		e->GetComponent<BoxPush>()->Init();
-
+		
+			e->AddComponent<BoxPush>();
+			e->GetComponent<BoxPush>()->Init();
+		
 		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
-		e->GetTransform()->SetScale(glm::vec3(1.f, 1.f, 1.f));
+		
 
 		pos[i + 3] = e->GetTransform()->GetPosition();
 		scaleValues[i + 3] = e->GetTransform()->GetScale();
@@ -423,7 +441,7 @@ void Application::GameInit()
 	m_entities.push_back(e);
 	e->AddComponent(
 		new MeshRenderer(
-			Resources::GetInstance()->GetModel("cube.obj"),
+			Resources::GetInstance()->GetModel("cube2.obj"),
 			Resources::GetInstance()->GetShader("simple"),
 			Resources::GetInstance()->GetTexture("Wood.jpg"))
 	);
@@ -433,7 +451,7 @@ void Application::GameInit()
 	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
 		100.f, 1.f, 100.f)));
 	e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
-	e->GetTransform()->SetScale(glm::vec3(100.f, 1.f, 100.f));
+	e->GetTransform()->SetScale(glm::vec3(2.f, 0.02f, 2.f));
 	
 
 	e = new Entity();
@@ -531,7 +549,7 @@ void Application::UserInterface() {
 
 		
 		ImGui::SliderFloat3("Position", (float*)&pos[entityNum], -50.0f, 50.0f);
-		ImGui::SliderFloat3("Scale", (float*)&scaleValues[entityNum], 0.0f, 5.0f);
+		ImGui::SliderFloat3("Scale", (float*)&scaleValues[entityNum], 0.0f, 2.0f);
 		ImGui::SliderFloat3("Rotation", (float*)&rotationValues[entityNum], 0.f, 360.0f);
 
 
@@ -609,7 +627,9 @@ void Application::UserInterface() {
 
 	}
 	else if (m_uiState == UiState::EDITALL) {
-		ImGui::ColorEdit3("Box color", (float*)&colorB);
+		ImGui::ColorEdit3("Object color", (float*)&colorB);
+		ImGui::ColorEdit3("Light color", (float*)&lightColor);
+		ImGui::SliderFloat3("Light Position", (float*)&lightPosition, -10.0f, 10.0f);
 
 		if (ImGui::Button("Toggle Gamma Correction"))
 		{

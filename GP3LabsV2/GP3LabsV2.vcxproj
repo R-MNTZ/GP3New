@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="BoxPush.h" />
     <ClInclude Include="BoxShape.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraComp.h" />
@@ -61,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BoxPush.cpp" />
     <ClCompile Include="BoxShape.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraComp.cpp" />

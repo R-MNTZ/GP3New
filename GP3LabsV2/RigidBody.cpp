@@ -97,25 +97,3 @@ void RigidBody::ResumeMovement() {
 	m_rigidBody->setActivationState(1);
 	
 }
-
-void BoxPush::OnUpdate(float deltaTime)
-{
-}
-
-void BoxPush::OnRender()
-{
-}
-
-void BoxPush::OnStart()
-{
-}
-
-
-
-
-
-
-
-void BoxPush::Init() {
-	Physics::GetInstance()->AddBoxPush(this);
-}

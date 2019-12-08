@@ -13,7 +13,7 @@
 
 #include <string>
 
-//​TODO:​ implement different log levels
+
 
 enum logType
 {
@@ -29,5 +29,5 @@ private:
 public:
 	static void Debug(const std::string& msg, logType logType, const char* file, int line);
 	static bool CheckGLError(const char* file, int line);
-	///const static char fff = 'n';
+	
 };

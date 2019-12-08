@@ -34,13 +34,3 @@ public:
 
 };
 
-class BoxPush : public Component
-{
-public:
-	virtual void OnUpdate(float deltaTime) override;
-	virtual void OnRender() override;
-	virtual void OnStart() override;
-	void ForceUp2(float deltaTime);
-	
-	void Init();
-};

@@ -4,6 +4,7 @@ uniform vec3 objectColor;
 uniform sampler2D diffuse;
 uniform vec3 viewPos;
 uniform vec3 lightPos;
+uniform vec3 lightColor;
 
 
 uniform int gamma;
@@ -12,12 +13,12 @@ in vec2 texCoords0;
 vec4 c1;
 
 
-vec3 lightColor = vec3(1.0f,1.0f,1.0f);
+
 
 
 in vec3 Normal;
 in vec3 FragPos;
-float specularStrength = 10.0f;
+float specularStrength = 5.0f;
 
 
 void main()
@@ -28,13 +29,13 @@ void main()
     vec4 c1 = vec4(gammaTex, 1.0f);
 
 	//ambient
-	vec3 ambient = 0.5 * lightColor;
+	vec3 ambient = 0.7 * c1.rgb;
 
 	//diffuse
 	vec3 Normal = normalize(Normal);
 	vec3 lightDir = normalize(lightPos - FragPos); 
 	float diff = max(dot(lightDir, Normal), 0.0);
-	vec3 diffuse1 = diff * c1.rgb;
+	vec3 diffuse1 = diff * lightColor;
 
 	//specular
 	vec3 viewDir = normalize(viewPos - FragPos);

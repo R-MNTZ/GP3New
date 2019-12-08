@@ -17,7 +17,7 @@ private:
 public:
 	static Input* GetInstance();
 	void SetKey(SDL_Keycode key, bool state);
-	bool GetKey(SDL_Keycode key); //check if its curently down or not
+	bool GetKey(SDL_Keycode key);
 	bool GetKeyDown(SDL_Keycode key);
 	bool GetKeyUp(SDL_Keycode key);
 	
