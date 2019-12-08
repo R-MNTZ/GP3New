@@ -8,3 +8,7 @@ ConeShape::ConeShape(float radius, float height)
 	m_shape = new btConeShape(radius, height);
 	m_type = CShapeType::CONE;
 }
+
+ConeShape::~ConeShape() {
+	delete m_shape;
+}

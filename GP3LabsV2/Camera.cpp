@@ -55,6 +55,3 @@ void Camera::SetProjOrtho(float left, float right, float bottom, float top, floa
 
 }
 
-Camera::~Camera() {
-	delete m_parentTransform;
-}

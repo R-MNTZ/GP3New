@@ -12,8 +12,10 @@ private:
 	btRigidBody* m_rigidBody;
 	btMotionState* m_mState = nullptr;
 	float mass;
+	
 
 public:
+	~RigidBody();
 	virtual void OnUpdate(float deltaTime) override;
 	virtual void OnRender() override;
 

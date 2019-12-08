@@ -13,6 +13,7 @@ private:
 
 public:
 	Entity();
+	~Entity();
 
 	void AddComponent(Component* c);
 	template<class T> void AddComponent();

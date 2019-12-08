@@ -6,6 +6,10 @@ Entity::Entity()
 	m_transform = new Transform();
 }
 
+Entity::~Entity() {
+	delete m_transform;
+}
+
 void Entity::AddComponent(Component* c)
 {
 	c->m_entity = this;

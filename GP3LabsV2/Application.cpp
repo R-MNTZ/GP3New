@@ -25,8 +25,10 @@
 Application* Application::m_application = nullptr;
 glm::vec3 colorB(0.f, 0.f, 0.f);
 int gamma = 1;
+float counter = 1.0f;
 SDL_Event Application::event;
 std::vector<Entity*> Application::m_entities;
+
 
 
 Application::Application() {
@@ -204,8 +206,8 @@ void Application::Loop()
 		Update(deltaTime);
 		Render();
 
-
-
+		
+		counter = counter + 0.001;
 		
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Render();
@@ -219,6 +221,7 @@ void Application::Loop()
 
 void Application::Quit()
 {
+	
 	//Close SDL
 	Physics::GetInstance()->Quit();
 	SDL_GL_DeleteContext(m_glContext);
@@ -236,7 +239,11 @@ void Application::Quit()
 	ImGui_ImplSdlGL3_Shutdown();
 	ImGui::DestroyContext();
 
-	//delete entities
+	//delete entities + components
+	for (int i = 0; i < m_entities.size(); i++) {
+		delete m_entities.at(i)->GetComponent<RigidBody>();
+		delete m_entities.at(i)->GetComponent<MeshRenderer>();
+	}
 	m_entities.erase(m_entities.begin(), m_entities.end());
 
 	
@@ -294,8 +301,9 @@ void Application::GameInit()
 {
 	//Loading all resources
 	Resources::GetInstance()->AddModel("cube.obj");
-	Resources::GetInstance()->AddModel("monkey3.obj");
+	Resources::GetInstance()->AddModel("rim.obj");
 	Resources::GetInstance()->AddModel("heart.obj");
+	Resources::GetInstance()->AddModel("spider.obj");
 	Resources::GetInstance()->AddModel("lego.obj");
 	Resources::GetInstance()->AddModel("star.obj");
 	Resources::GetInstance()->AddTexture("Wood.jpg");
@@ -314,13 +322,13 @@ void Application::GameInit()
 	m_entities.push_back(e);
 	e->AddComponent(
 		new MeshRenderer(
-			Resources::GetInstance()->GetModel("star.obj"),
+			Resources::GetInstance()->GetModel("rim.obj"),
 			Resources::GetInstance()->GetShader("simple"),
-			Resources::GetInstance()->GetTexture("lava.jpg"))
+			Resources::GetInstance()->GetTexture("Wood.jpg"))
 	);
 	MeshRenderer* m = e->GetComponent<MeshRenderer>();
 	e->GetTransform()->SetPosition(glm::vec3(0, 0, -10));
-	e->GetTransform()->SetScale(glm::vec3(0.25f, 0.25f, 0.25f));
+	e->GetTransform()->SetScale(glm::vec3(0.1f, 0.1f, 0.1f));
 	e->AddComponent<RigidBody>();
 	e->GetComponent<RigidBody>()->Init(new BoxShape(glm::vec3(
 		1.f, 0.5f, 1.f)));
@@ -338,7 +346,7 @@ void Application::GameInit()
 		new MeshRenderer(
 			Resources::GetInstance()->GetModel("heart.obj"),
 			Resources::GetInstance()->GetShader("simple"),
-			Resources::GetInstance()->GetTexture("Wood.jpg"))
+			Resources::GetInstance()->GetTexture("brick.jpg"))
 	);
 
 
@@ -369,9 +377,9 @@ void Application::GameInit()
 		if (i == 8) {
 			e->AddComponent(
 				new MeshRenderer(
-					Resources::GetInstance()->GetModel("monkey3.obj"),
+					Resources::GetInstance()->GetModel("lego.obj"),
 					Resources::GetInstance()->GetShader("simple"),
-					Resources::GetInstance()->GetTexture("Wood.jpg"))
+					Resources::GetInstance()->GetTexture("lava.jpg"))
 			);
 		}
 		else if (i == 9) {
@@ -379,7 +387,7 @@ void Application::GameInit()
 				new MeshRenderer(
 					Resources::GetInstance()->GetModel("lego.obj"),
 					Resources::GetInstance()->GetShader("simple"),
-					Resources::GetInstance()->GetTexture("Wood.jpg"))
+					Resources::GetInstance()->GetTexture("lava.jpg"))
 			);
 		}
 		else {
@@ -408,7 +416,7 @@ void Application::GameInit()
 		glm::vec3 rotNew = glm::vec3(0, 0, 0);
 		rotationValues[i + 3] = rotNew;
 
-
+		
 	}
 
 	e = new Entity();

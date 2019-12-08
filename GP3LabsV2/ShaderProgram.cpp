@@ -18,6 +18,8 @@ ShaderProgram::ShaderProgram(const std::string& vShaderFile, const std::string& 
 ShaderProgram::~ShaderProgram()
 {
 	glDeleteProgram(m_program);
+	delete m_vShader;
+	delete m_fShader;
 }
 
 void ShaderProgram::BindAttribLoc(GLuint loc, const char* name)

@@ -29,3 +29,7 @@ void CameraComp::OnStart()
 	}
 
 }
+
+CameraComp::~CameraComp() {
+	delete m_camera;
+}

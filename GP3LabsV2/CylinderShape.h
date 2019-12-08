@@ -9,4 +9,5 @@ private:
 
 public:
 	CylinderShape(glm::vec3 halfExtents);
+	~CylinderShape();
 };

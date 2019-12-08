@@ -5,7 +5,7 @@
 class CameraComp : public Component
 {
 private:
-
+	~CameraComp();
 
 
 public:

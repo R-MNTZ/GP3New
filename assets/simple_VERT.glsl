@@ -1,4 +1,4 @@
-#version 330 core
+#version 400
 
 layout(location = 0) in vec3 pos;
 layout(location = 2) in vec2 texCoords;
@@ -19,7 +19,7 @@ void main()
 	
 	gl_Position = MVP * vec4(pos, 1.0f);
 	texCoords0 = texCoords;
-	Normal = normal;
-	FragPos = position;
+	Normal = mat3(transpose(inverse(model))) * normal;
+	FragPos = pos;
 	
 }

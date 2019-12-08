@@ -9,4 +9,5 @@ private:
 
 public:
 	SphereShape(float scalar);
+	~SphereShape();
 };

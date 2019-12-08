@@ -83,6 +83,7 @@ public:
 	bool lock = false;
 	SDL_Haptic* controllerHaptic;
 	
+	
 
 
 

@@ -12,6 +12,11 @@ void RigidBody::OnRender()
 {
 }
 
+RigidBody::~RigidBody() {
+	delete m_mState;
+	delete m_rigidBody;
+}
+
 void RigidBody::Init(CollisionShape* shape, float mass, const glm::vec3 localInteria)
 {
 	btTransform bT =

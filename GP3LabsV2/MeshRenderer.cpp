@@ -52,8 +52,7 @@ void MeshRenderer::OnRender()
 	loc = glGetUniformLocation(m_program->Get(), "gamma");
 	glUniform1i(loc, applyGamma);
 	//Pass in Light values
-	Lighting* light = new Lighting();
-	light->passLightUniform();
+	Lighting::GetInstance()->passLightUniform();
 	
 
 

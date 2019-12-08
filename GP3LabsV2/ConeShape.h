@@ -10,4 +10,5 @@ private:
 
 public:
 	ConeShape(float radius, float height);
+	~ConeShape();
 };
