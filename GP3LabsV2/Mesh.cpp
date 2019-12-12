@@ -1,11 +1,7 @@
 #include "pch.h" 
 #include "Mesh.h" 
 
-static const GLfloat coolTriangle[] = {
-   -1.0f, -1.0f, 0.0f,
-   1.0f, -1.0f, 0.0f,
-   0.0f,  1.0f, 0.0f,
-};
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices)
 {
 	m_indices = indices;

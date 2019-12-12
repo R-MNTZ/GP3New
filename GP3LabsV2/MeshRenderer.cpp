@@ -29,14 +29,7 @@ void MeshRenderer::OnRender()
 	//set uniforms here!
 	glm::mat4 model =
 		m_entity->GetTransform()->GetTransformationMatrix();
-	//	glm::mat4 view = glm::lookAt(glm::vec3(0.f,0.f,0.f), glm::vec3(0.f, 0.f, 1.f)
-		//	- glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)
-			//);
-
-	//	glm::mat4 proj = glm::perspective(45.5f, (float)WINDOW_W /
-			//(float)WINDOW_H, 0.1f, 1000.f);
-
-		//glm::mat4 mvp = proj * view * model;
+	
 	GLuint loc = glGetUniformLocation(m_program->Get(), "model");
 	glUniformMatrix4fv(loc, 1, false, (const GLfloat*)glm::value_ptr(model));
 	glm::vec3 viewPos = Application::GetInstance()->GetCamera()->GetParentTransform()->GetPosition();
@@ -56,7 +49,7 @@ void MeshRenderer::OnRender()
 	
 
 
-	m_texture->Bind();
+	
 
 	for (Mesh* mesh : m_model->GetMeshes())
 	{

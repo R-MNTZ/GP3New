@@ -17,8 +17,6 @@
 #include "BoxPush.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl_gl3.h>
-
-
 #include <string>
 
 //declaring static and external variables
@@ -27,7 +25,7 @@ glm::vec3 colorB(0.f, 0.f, 0.f);
 glm::vec3 lightColor(1.f, 1.f, 1.f);
 glm::vec3 lightPosition(0.f, 0.f, 0.f);
 int gamma = 1;
-float counter = 1.0f;
+
 SDL_Event Application::event;
 std::vector<Entity*> Application::m_entities;
 
@@ -97,6 +95,7 @@ void Application::OpenGlinit()
 	m_glContext = SDL_GL_CreateContext(m_window);
 	CHECK_GL_ERROR();
 
+	//set up ImGui
 	ImGui::CreateContext();
 	ImGui_ImplSdlGL3_Init(m_window);
 	// Setup style
@@ -214,9 +213,9 @@ void Application::Loop()
 		Render();
 
 		
-		counter = counter + 0.001;
 		
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		
+		
 		ImGui::Render();
 		ImGui_ImplSdlGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -230,11 +229,14 @@ void Application::Quit()
 {
 	
 	//Close SDL
-	Physics::GetInstance()->Quit();
+	
 	SDL_GL_DeleteContext(m_glContext);
 	SDL_DestroyWindow(m_window);
 	SDL_QuitSubSystem(SDL_INIT_EVERYTHING);
 	SDL_Quit();
+
+	//Quit physics
+	Physics::GetInstance()->Quit();
 
 	//Close Controller & Joystick & Haptic
 	SDL_JoystickClose(controller);
@@ -483,14 +485,7 @@ void Application::SetCamera(Camera* camera)
 void Application::SetObjTransformAttribs()
 {
 	
-	if (entityNum > 2) {
-		if (m_entities.at(entityNum)->GetTransform()->GetPosition() != pos[entityNum]) {
-			m_entities.at(entityNum)->GetTransform()->SetPosition(pos[entityNum]);
-		}
-		pos[entityNum] = m_entities.at(entityNum)->GetTransform()->GetPosition();
-
-	}
-	else {
+	
 
 
 		// position
@@ -499,7 +494,7 @@ void Application::SetObjTransformAttribs()
 		}
 		pos[entityNum] = m_entities.at(entityNum)->GetTransform()->GetPosition();
 		
-	}
+	
 
 	for (int i = 0; i < 13; i++) {
 		pos[i] = m_entities.at(i)->GetTransform()->GetPosition();
@@ -531,21 +526,21 @@ void Application::SetObjTransformAttribs()
 }
 
 void Application::UserInterface() {
-	if (ImGui::Button("Select Component")) {
+	if (ImGui::Button("Select Entity")) {
 		m_uiState = UiState::SELECT;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Edit Component")) {
+	if (ImGui::Button("Edit Entity")) {
 		m_uiState = UiState::EDITCOMP;
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Edit all Components")) {
+	if (ImGui::Button("Edit all Entities")) {
 		m_uiState = UiState::EDITALL;
 	}
 
 
 	if (m_uiState == UiState::EDITCOMP) {
-		ImGui::Text("Hello, world!");
+		
 
 		
 		ImGui::SliderFloat3("Position", (float*)&pos[entityNum], -50.0f, 50.0f);
@@ -589,6 +584,7 @@ void Application::UserInterface() {
 		if (ImGui::Button("Object0")) {
 			entityNum = 0;
 			m_uiState = UiState::EDITCOMP;
+			//Move Camera to show entity
 			glm::vec3 newCameraPos;
 			newCameraPos = m_entities.at(entityNum)->GetTransform()->GetPosition() + glm::vec3(0.f, 0.f, 10.f);
 			m_entities.at(2)->GetTransform()->SetPosition(newCameraPos);
@@ -643,6 +639,7 @@ void Application::UserInterface() {
 
 		ImGui::Text("Skybox");
 		if (ImGui::Button("Brick Wall")) {
+			
 			m_entities.at(14)->AddComponent(new MeshRenderer(
 				Resources::GetInstance()->GetModel("cube.obj"),
 				Resources::GetInstance()->GetShader("simple"),
@@ -651,6 +648,7 @@ void Application::UserInterface() {
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Sky")) {
+			
 			m_entities.at(14)->AddComponent(new MeshRenderer(
 				Resources::GetInstance()->GetModel("cube.obj"),
 				Resources::GetInstance()->GetShader("simple"),
@@ -659,6 +657,7 @@ void Application::UserInterface() {
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Wood")) {
+			
 			m_entities.at(14)->AddComponent(new MeshRenderer(
 				Resources::GetInstance()->GetModel("cube.obj"),
 				Resources::GetInstance()->GetShader("simple"),
@@ -667,6 +666,7 @@ void Application::UserInterface() {
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Lava")) {
+			
 			m_entities.at(14)->AddComponent(new MeshRenderer(
 				Resources::GetInstance()->GetModel("cube.obj"),
 				Resources::GetInstance()->GetShader("simple"),
@@ -674,6 +674,7 @@ void Application::UserInterface() {
 			);
 		}
 	}
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 }
 
 

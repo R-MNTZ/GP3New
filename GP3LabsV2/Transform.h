@@ -37,5 +37,6 @@ public:
 	inline void AddRotation(glm::quat deltaRotation) { m_rotation = deltaRotation * m_rotation; m_isDirty = true; }
 	inline void SetScale(glm::vec3 newScale) { m_isDirty = true; m_scale = newScale; }
 	inline void addScale(glm::vec3 deltaScale) { m_isDirty = true; m_scale += deltaScale; }
+	
 	void RotateEulerAxis(float angle, glm::vec3 axis);
 };

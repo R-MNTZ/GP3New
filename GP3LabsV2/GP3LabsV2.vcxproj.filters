@@ -134,6 +134,7 @@
     <None Include="..\assets\simple_VERT.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">

@@ -46,6 +46,7 @@ void Entity::AddComponent()
 		LOG_DEBUG("Can't add component, does not inherit from component", logType::ERROR);
 
 	}
+	
 }
 
 template<class T>

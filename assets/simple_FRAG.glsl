@@ -53,9 +53,8 @@ void main()
 
 		
 		if (gamma == 1){
-		float gamma = 2.2;
-		fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
-
+			float gamma = 2.2;
+			fragColor.rgb = pow(fragColor.rgb, vec3(1.0/gamma));
 		} 
 
 		gl_FragColor = clamp(fragColor, 0.0f, 1.0f); 

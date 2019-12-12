@@ -59,6 +59,7 @@
   <ItemGroup>
     <None Include="..\assets\simple_FRAG.glsl" />
     <None Include="..\assets\simple_VERT.glsl" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
