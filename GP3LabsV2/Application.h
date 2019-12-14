@@ -11,7 +11,7 @@ enum AppState
 	INITILISING, RUNNING, QUITTING
 };
 
-//ui states
+//ui states enum
 enum UiState
 {
 	SELECT, EDITCOMP, EDITALL
