@@ -19,14 +19,14 @@ MeshRenderer::MeshRenderer(std::shared_ptr<Model> model, std::shared_ptr<ShaderP
 
 void MeshRenderer::OnUpdate(float delatTime)
 {
-	//LOG_DEBUG("Im updating!", errType::TRACE);
+	//LOG_DEBUG("Update() is working!!", errType::TRACE);
 }
 
 void MeshRenderer::OnRender()
 {
 	m_program->Use();
 
-	//set uniforms here!
+	
 	glm::mat4 model =
 		m_entity->GetTransform()->GetTransformationMatrix();
 	
@@ -68,15 +68,7 @@ void MeshRenderer::OnRender()
 
 void MeshRenderer::OnStart()
 {
-	/*
-	CameraComp a;
-	a.m_camera = new Camera(m_entity->GetTransform());
-
-	if (Application::GetInstance()->GetCamera() == nullptr)
-	{
-		Application::GetInstance()->SetCamera(a.m_camera);
-	}
-	*/
+	
 }
 
 MeshRenderer::~MeshRenderer() {

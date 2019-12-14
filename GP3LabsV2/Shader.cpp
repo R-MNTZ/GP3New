@@ -36,7 +36,7 @@ GLuint Shader::LoadShaderFromFile(const std::string& fileName, SHADER_TYPE type)
 		return 0;
 	}
 
-	//calc file size
+	//calculate file size
 	if (file.good())
 	{
 		file.seekg(0, std::ios::end);

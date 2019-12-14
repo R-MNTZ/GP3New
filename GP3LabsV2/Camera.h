@@ -40,8 +40,8 @@ public:
 	inline glm::mat4 GetView() { return m_viewMatrix; }
 	inline glm::mat4 GetProj() { return m_projMatrix; }
 	inline CameraType GetType() { return m_type; }
-	//sets the perspective projection
+	//set the perspective projection
 	void SetProjPersp(float fov, float ratio, float nearPlane, float farPlane);
-	//sets the orthographic projection
+	//set the orthographic projection
 	void SetProjOrtho(float left, float right, float bottom, float top, float nearPlane, float farPlane);
 };

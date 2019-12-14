@@ -30,12 +30,12 @@ void ShaderProgram::BindAttribLoc(GLuint loc, const char* name)
 
 void ShaderProgram::Link()
 {
-	//link shaders and attribs
+	//link shaders and attributes
 	glLinkProgram(m_program);
 	CheckForLinkErrors();
 	CHECK_GL_ERROR();
 
-	//if they were linked w no longer need them
+	//if they were linked we no longer need them
 	delete m_vShader;
 	delete m_fShader;
 }

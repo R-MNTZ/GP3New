@@ -5,7 +5,7 @@
 class ShaderProgram
 {
 private:
-	//TODO track currently active shader
+	
 	GLuint m_program;
 	Shader* m_vShader, * m_fShader;
 

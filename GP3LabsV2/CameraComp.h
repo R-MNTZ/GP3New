@@ -16,6 +16,6 @@ public:
 	void Start();
 
 	Camera* m_camera;
-	//Inherited via component
+	
 
 };

@@ -72,7 +72,7 @@
     <ClCompile Include="ConeShape.cpp" />
     <ClCompile Include="CylinderShape.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="GPLabsV2.cpp" />
+    <ClCompile Include="GPLabs3.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_draw.cpp" />

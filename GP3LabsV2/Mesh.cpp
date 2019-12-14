@@ -20,13 +20,13 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<int> indices)
 	GL_ATTEMPT(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo));
 	GL_ATTEMPT(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * m_indices.size(), m_indices.data(), GL_STATIC_DRAW));
 
-	//tell the VAO that 1 is the position element
+	//position 
 	SetUpAttrib(0, 3, GL_FLOAT, 0);
 
-	//tell the VAO that 1 is the color element 
+	//colour
 	SetUpAttrib(1, 4, GL_FLOAT, sizeof(glm::vec3));
 
-	//uv
+	//Texture Coordinates
 	SetUpAttrib(2, 2, GL_FLOAT, sizeof(glm::vec3) + sizeof(glm::vec4));
 
 	//normals

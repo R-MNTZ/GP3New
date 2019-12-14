@@ -193,14 +193,14 @@
       <FileName>Vertex.h</FileName>
     </TypeIdentifier>
   </Struct>
-  <Enum Name="AppState">
+  <Enum Name="AppState" Collapsed="true">
     <Position X="2.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAAAIAAACAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Application.h</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="UiState">
+  <Enum Name="UiState" Collapsed="true">
     <Position X="3.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIABBAAAAAAAAAAA=</HashCode>

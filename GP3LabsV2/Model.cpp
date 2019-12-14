@@ -69,7 +69,8 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.color = glm::vec4(1.f);
 		}
 
-		if (mesh->mTextureCoords[0]) //does the mesh contain texcoords
+		if (mesh->mTextureCoords[0]) 
+			//does the mesh contain texcoords
 		{
 			vertex.texture.x = mesh->mTextureCoords[0][i].x;
 			vertex.texture.y = mesh->mTextureCoords[0][i].y;

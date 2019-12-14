@@ -19,7 +19,7 @@
 #include <imgui/imgui_impl_sdl_gl3.h>
 #include <string>
 
-//declaring static and external variables
+
 Application* Application::m_application = nullptr;
 glm::vec3 colorB(0.f, 0.f, 0.f);
 glm::vec3 lightColor(1.f, 1.f, 1.f);
@@ -260,11 +260,6 @@ void Application::Quit()
 }
 
 Application::~Application() {
-	/*
-	delete[] pos;
-	delete[] scaleValues;
-	delete[] rotationValues;
-	*/
 	delete m_application;
 }
 
@@ -428,7 +423,7 @@ void Application::GameInit()
 			e->AddComponent<BoxPush>();
 			e->GetComponent<BoxPush>()->Init();
 		
-		//e->GetComponent<RigidBody>()->Get()->setMassProps(0, btVector3());
+		
 		
 
 		pos[i + 3] = e->GetTransform()->GetPosition();
